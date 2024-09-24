@@ -33,6 +33,6 @@ This project is an **Airline System Management** application developed in **C** 
 8. **License**: The license under which the project is released.
 
 
-For any questions or feedback, please reach out to your.albreem@iut-dhake.du
+For any questions or feedback, please reach out to albreem@iut-dhake.du
 
 
