@@ -22,7 +22,7 @@ This project is an **Airline System Management** application developed in **C** 
 
 ## Future Enhancements
 - **Add a user-friendly GUI.**
-- **Implement flight rescheduling and cancellations.**
+- **Implement flight rescheduling.**
 - **Add data validation and error handling for user inputs.**
 
 
