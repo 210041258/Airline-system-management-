@@ -30,7 +30,7 @@ This project is an **Airline System Management** application developed in **C** 
 1. **Overview**: A brief description of the project.
 2. **Tech Stack**: A list of technologies used.
 7. **Future Enhancements**: Optional improvements for future releases.
-8. **License**: The license under which the project is released.
+8. **License**: The license under https://opensource.org/license/MIT which the project is released.
 
 
 For any questions or feedback, please reach out to albreem@iut-dhake.du
