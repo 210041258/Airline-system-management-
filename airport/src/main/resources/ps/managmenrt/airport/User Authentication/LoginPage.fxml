@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="CENTER" prefHeight="563.0" prefWidth="638.0" spacing="20" style="-fx-background-color: #f0f8ff; -fx-padding: 20;" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ps.managmenrt.airport.LoginPage_controller">
+    <Label style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #003366;" text="Welcome to the Airport Management System" />
+
+    <Label style="-fx-font-size: 18px; -fx-text-fill: #003366;" text="Select Role:" />
+    <HBox alignment="CENTER" spacing="15">
+        <RadioButton fx:id="adminRadioButton" onAction="#handleRoleSelection" text="Admin" />
+        <RadioButton fx:id="userRadioButton" onAction="#handleRoleSelection" text="User" />
+    </HBox>
+
+    <VBox fx:id="adminLoginBox" alignment="CENTER" spacing="10" style="-fx-padding: 10; -fx-background-color: #e6f7ff; -fx-border-color: #003366; -fx-border-radius: 5; -fx-background-radius: 5;" visible="false">
+        <Label style="-fx-font-size: 20px; -fx-text-fill: #003366;" text="Admin Login" />
+        <GridPane alignment="CENTER" hgap="10" vgap="10">
+            <TextField fx:id="adminUsernameField" promptText="Admin Username" style="-fx-pref-width: 200px;" />
+            <PasswordField fx:id="adminPasswordField" promptText="Admin Password" style="-fx-pref-width: 200px;" GridPane.columnIndex="9" />
+            <columnConstraints>
+                <ColumnConstraints />
+                <ColumnConstraints />
+                <ColumnConstraints />
+                <ColumnConstraints />
+                <ColumnConstraints />
+                <ColumnConstraints />
+                <ColumnConstraints />
+                <ColumnConstraints />
+                <ColumnConstraints />
+            <ColumnConstraints />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints />
+            </rowConstraints>
+        </GridPane>
+        <Button onAction="#handleAdminLogin" style="-fx-background-color: #003366; -fx-text-fill: white; -fx-pref-width: 200px; -fx-padding: 10;" text="Login as Admin" />
+        <Button onAction="#goToMain" style="-fx-background-color: #cc0000; -fx-text-fill: white; -fx-pref-width: 200px; -fx-padding: 10;" text="Back to Main" />
+    </VBox>
+
+    <VBox fx:id="userLoginBox" alignment="CENTER" spacing="10" style="-fx-padding: 10; -fx-background-color: #e6f7ff; -fx-border-color: #003366; -fx-border-radius: 5; -fx-background-radius: 5;" visible="false">
+        <Label style="-fx-font-size: 20px; -fx-text-fill: #003366;" text="User Login" />
+        <GridPane alignment="CENTER" hgap="10" vgap="10">
+            <TextField fx:id="userUsernameField" promptText="User Username" style="-fx-pref-width: 200px;" />
+            <PasswordField fx:id="userPasswordField" promptText="User Password" style="-fx-pref-width: 200px;" GridPane.columnIndex="3" />
+            <columnConstraints>
+                <ColumnConstraints />
+                <ColumnConstraints />
+                <ColumnConstraints />
+            <ColumnConstraints />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints />
+                <RowConstraints />
+            </rowConstraints>
+        </GridPane>
+        <Button onAction="#handleUserLogin" style="-fx-background-color: #003366; -fx-text-fill: white; -fx-pref-width: 200px; -fx-padding: 10;" text="Login as User" />
+        <Button onAction="#goToMain" style="-fx-background-color: #cc0000; -fx-text-fill: white; -fx-pref-width: 200px; -fx-padding: 10;" text="Back to Main" />
+    </VBox>
+</VBox>

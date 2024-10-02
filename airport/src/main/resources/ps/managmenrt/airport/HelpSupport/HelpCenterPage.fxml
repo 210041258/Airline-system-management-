@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+
+<AnchorPane prefHeight="413.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ps.managmenrt.airport.HelpCenterPage_controller">
+<ListView fx:id="articleListView" layoutX="14.0" layoutY="13.0" onMouseClicked="#handleArticleClick" prefHeight="347.0" prefWidth="764.0" />
+        <HBox alignment="CENTER" spacing="10" style="-fx-padding: 20;" />
+             <Button fx:id="backButton" layoutX="376.0" layoutY="374.0" onAction="#handleBack" style="-fx-background-color: #003366; -fx-text-fill: white;" text="Back" />
+
+</AnchorPane>

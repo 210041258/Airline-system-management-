@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="TOP_CENTER" prefHeight="151.0" prefWidth="800.0" spacing="20" style="-fx-background-color: #f0f8ff;" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ps.managmenrt.airport.LogoutPage_controller">
+
+        <HBox alignment="CENTER" prefHeight="164.0" prefWidth="800.0" spacing="10" style="-fx-padding: 20;">
+            <Button fx:id="logoutButton" onAction="#handleLogout" prefHeight="25.0" prefWidth="150.0" style="-fx-background-color: #003366; -fx-text-fill: white;" text="Logout" />
+      <Button fx:id="logoutButton1" onAction="#handleBack" prefHeight="25.0" prefWidth="155.0" style="-fx-background-color: #003366; -fx-text-fill: white;" text="Back" />
+        </HBox>
+
+    </VBox>
