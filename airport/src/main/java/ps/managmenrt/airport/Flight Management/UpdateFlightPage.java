@@ -11,7 +11,7 @@ public class UpdateFlightPage extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(UpdateFlightPage.class.getResource("Flight Management/UpdateFlightPage.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 720, 240);
+        Scene scene = new Scene(fxmlLoader.load(), 720, 400);
         stage.setTitle("Hello!");
         stage.setScene(scene);
         stage.show();

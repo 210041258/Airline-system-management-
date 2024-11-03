@@ -9,7 +9,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
 import java.sql.*;
 
 public class ContactSupportPage_controller {
@@ -26,50 +25,51 @@ public class ContactSupportPage_controller {
     void handleSend(ActionEvent event) {
         String feedback = feedbackTextArea.getText();
 
+        String jdbcUrl = "jdbc:mysql://localhost:3306/";
+        String dbUsername = "root";
+        String dbPassword = "Root@2023";
+        String databaseName = "airlines_suggestion_issues";
+        String tableName = "support_feedback";
+
+
         if (!feedback.isEmpty()) {
-            try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/airlines_suggestion_issues", "root", "Root@2023");
-                 Statement statement = connection.createStatement()) {
+            try (Connection serverConn = DriverManager.getConnection(jdbcUrl, dbUsername, dbPassword);
+                 Statement serverStmt = serverConn.createStatement()) {
 
-                // Check if the table exists
-                ResultSet resultSet = statement.executeQuery("SELECT 1 FROM support_feedback LIMIT 1");
-                if (resultSet.next()) {
-                    // Table exists, proceed with insertion
-                    try (PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO support_feedback (feedback) VALUES (?)")) {
-                        preparedStatement.setString(1, feedback);
-                        int rowsAffected = preparedStatement.executeUpdate();
-                        if (rowsAffected > 0) {
-                            // Feedback successfully inserted
-                            feedbackTextArea.clear();
-                            handleBack(event);
+                serverStmt.executeUpdate("CREATE DATABASE IF NOT EXISTS " + databaseName);
 
-                            System.out.println("Feedback submitted successfully!");
-                        } else {
-                            // Error inserting feedback
-                            System.err.println("Error submitting feedback.");
-                        }
-                    }
-                } else {
-                    // Table does not exist, create it first
-                    // Then, try to insert again
-                    try (PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO support_feedback (feedback) VALUES (?)")) {
+
+                String dbUrl = jdbcUrl + databaseName;
+                try (Connection dbConn = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+                     Statement stmt = dbConn.createStatement()) {
+
+                    String createTableSQL = "CREATE TABLE IF NOT EXISTS " + tableName + " (" +
+                            "id INT AUTO_INCREMENT PRIMARY KEY," +
+                            "feedback TEXT" +
+                            ")";
+                    stmt.executeUpdate(createTableSQL);
+
+
+                    // 4. Insert feedback
+                    try (PreparedStatement preparedStatement = dbConn.prepareStatement(
+                            "INSERT INTO " + tableName + " (feedback) VALUES (?)")) {
                         preparedStatement.setString(1, feedback);
-                        int rowsAffected = preparedStatement.executeUpdate();
-                        if (rowsAffected > 0) {
-                            // Feedback successfully inserted
-                            feedbackTextArea.clear();
-                            handleBack(event);
-                            System.out.println("Feedback submitted successfully!");
-                        } else {
-                            // Error inserting feedback
-                            System.err.println("Error submitting feedback.");
-                        }
+                        preparedStatement.executeUpdate();  // No need to check rowsAffected here
+                        System.out.println("Feedback submitted successfully!");
+                        feedbackTextArea.clear();
+                        handleBack(event);
                     }
+
+
                 }
+
             } catch (SQLException e) {
-                e.printStackTrace();
+                System.err.println("Error: " + e.getMessage()); // More helpful error message
+                e.printStackTrace(); // Replace with logging in a real app
             }
+
+
         } else {
-            // Feedback is empty, display an error message
             System.err.println("Please enter feedback.");
         }
     }

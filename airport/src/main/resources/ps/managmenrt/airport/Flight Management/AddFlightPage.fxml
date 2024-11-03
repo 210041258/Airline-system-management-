@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -12,11 +13,25 @@
     </padding>
 
     <Label fx:id="welcomeText" textFill="RED">
-      <font>
-         <Font name="Marlett" size="34.0" />
-      </font></Label>
-    <Button onAction="#onHelloButtonClick" prefHeight="73.0" prefWidth="113.0" text="Hello!" textFill="#da1212">
-      <font>
-         <Font name="Microsoft Uighur Bold" size="27.0" />
-      </font></Button>
+        <font>
+            <Font name="Marlett" size="34.0" />
+        </font>
+    </Label>
+
+    <TextField fx:id="flightIdField" promptText="Flight ID" />
+    <TextField fx:id="destinationField" promptText="Destination" />
+    <TextField fx:id="sourceField" promptText="Source" />
+    <TextField fx:id="planeIdField" promptText="Plane ID" />
+    <TextField fx:id="planeCompanyField" promptText="Plane Company" />
+
+    <Button onAction="#onInsertButtonClick" prefHeight="74.0" prefWidth="216.0" text="Insert Flight" textFill="#da1212">
+        <font>
+            <Font name="Microsoft Uighur Bold" size="27.0" />
+        </font>
+    </Button>
+    <Button onAction="#goBack" prefHeight="74.0" prefWidth="216.0" text="Back" textFill="#da1212">
+        <font>
+            <Font name="Microsoft Uighur Bold" size="27.0" />
+        </font>
+    </Button>
 </VBox>

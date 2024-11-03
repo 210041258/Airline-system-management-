@@ -45,13 +45,23 @@ public class LoginPage_controller {
 
     @FXML
     public void handleRoleSelection() {
+
         if (adminRadioButton.isSelected()) {
             adminLoginBox.setVisible(true);
             userLoginBox.setVisible(false);
+            userRadioButton.setSelected(false);
         } else if (userRadioButton.isSelected()) {
             userLoginBox.setVisible(true);
             adminLoginBox.setVisible(false);
+            adminRadioButton.setSelected(false);
         }
+        if(!userRadioButton.isSelected()){
+            userLoginBox.setVisible(false);
+        }
+        if(!adminRadioButton.isSelected()){
+            adminLoginBox.setVisible(false);
+        }
+
     }
 
     @FXML
@@ -59,11 +69,9 @@ public class LoginPage_controller {
         String username = adminUsernameField.getText();
         String password = adminPasswordField.getText();
 
-        if (username.equals("root2023") && password.equals("Root@2023")) { // Replace with your admin credentials check
-            // Authenticated as admin
+        if (username.equals("rootroot") && password.equals("Root@2023")) {
             loadDashboard(event, "Dashboard/AdminDashboard.fxml", "Admin Dashboard");
         } else {
-            // Invalid admin credentials
             displayErrorMessage("Invalid admin credentials.");
         }
     }
@@ -72,7 +80,7 @@ public class LoginPage_controller {
     public void handleUserLogin(ActionEvent event) {
         String username = userUsernameField.getText();
         String password = userPasswordField.getText();
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/users", "root", "Root@2023");
+        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/user_databases", "root", "Root@2023");
              PreparedStatement statement = connection.prepareStatement("SELECT * FROM users WHERE username = ? AND password = ?")) {
 
             statement.setString(1, username);

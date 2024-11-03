@@ -1,5 +1,5 @@
 # Airline System Management
-
+## pre_final-presention branch what we can do here i check it before we will contine (init-skill-check)
 ## Overview
 
 This application provides a comprehensive system for managing airline operations, including flight bookings, passenger information, staff assignments, and flight schedules. It's built with Java for a robust backend and a user-friendly graphical interface using JavaFX, powered by MySQL for data persistence.

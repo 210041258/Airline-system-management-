@@ -10,25 +10,61 @@ import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-
+import mysql.*;
 import javafx.scene.layout.VBox;
-
 import javafx.geometry.Insets;
 import javafx.stage.Stage;
-
-import java.awt.event.ActionEvent;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class HelpCenterPage_controller {
 
+
+    private List<String[]> createInitialArticles(int numArticles) {
+        List<String[]> articles = new ArrayList<>();
+        for (int i = 1; i <= numArticles; i++) {
+            String title = "Airline Article " + i;
+            String content = "Content for airline article " + i + ". Expand on this.";
+            articles.add(new String[]{title, content}); // Array of title and content
+        }
+        return articles;
+    }
+
     @FXML
     private ListView<String> articleListView;
 
     public void initialize() {
+        mysql.CreateDatabaseIfNotExists.main("airlines_articles");
+        mysql.CreatearticlesIfNotExists.main(null);
         try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/airlines_articles", "root", "Root@2023");
              Statement statement = connection.createStatement()) {
+
+
+
+            List<String[]> initialArticles = createInitialArticles(20);
+
+
+            for (String[] article : initialArticles) {
+                String title = article[0];
+                String content = article[1];
+
+                try (PreparedStatement insertStmt = connection.prepareStatement(
+                        "INSERT INTO " + "articles" + " (title, content) VALUES (?, ?)")) {
+                    insertStmt.setString(1, title);
+                    insertStmt.setString(2, content);
+                    insertStmt.executeUpdate();
+                } catch (SQLException e) {
+                    System.err.println("Error inserting article: " + title + ": " + e.getMessage());
+                }
+
+            }
+
+
+
+
+
+
 
             ResultSet resultSet = statement.executeQuery("SELECT title FROM articles");
 

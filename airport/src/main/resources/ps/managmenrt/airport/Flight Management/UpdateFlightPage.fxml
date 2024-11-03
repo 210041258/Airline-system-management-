@@ -3,20 +3,41 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="BOTTOM_CENTER" prefHeight="427.0" prefWidth="871.0" spacing="20.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ps.managmenrt.airport.UpdateFlightPage_controller">
+<VBox alignment="CENTER" prefHeight="500.0" prefWidth="600.0" spacing="15.0" style="/* styles.css */ .update-flight-pane {     -fx-background-color: #f5f5f5;     -fx-padding: 30px;     -fx-alignment: center;     -fx-border-color: #ddd;     -fx-border-radius: 10;     -fx-border-width: 1; }  .title-label {     -fx-text-fill: #e74c3c;     -fx-font-weight: bold; }  .input-field {     -fx-prompt-text-fill: #888;     -fx-font-size: 14px;     -fx-background-radius: 5;     -fx-border-radius: 5;     -fx-border-color: #ccc;     -fx-padding: 10px;     -fx-max-width: 300px; }  .update-button {     -fx-background-color: #3498db;     -fx-text-fill: white;     -fx-background-radius: 5; }  .update-button:hover {     -fx-background-color: #2980b9; }  .feedback-label {     -fx-text-fill: #27ae60;     -fx-font-weight: bold; } .feedback-label.error {     -fx-text-fill: #e74c3c; } " xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ps.managmenrt.airport.UpdateFlightPage_controller">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
 
-    <Label fx:id="welcomeText" textFill="RED">
-      <font>
-         <Font name="Marlett" size="34.0" />
-      </font></Label>
-    <Button onAction="#onHelloButtonClick" prefHeight="73.0" prefWidth="113.0" text="Hello!" textFill="#da1212">
-      <font>
-         <Font name="Microsoft Uighur Bold" size="27.0" />
-      </font></Button>
+    <Label fx:id="welcomeText" styleClass="title-label" text="Update Flight" textFill="#E74C3C">
+        <font>
+            <Font name="Arial Bold" size="34.0" />
+        </font>
+    </Label>
+
+    <TextField fx:id="flightIdField" promptText="Flight ID" styleClass="input-field" />
+    <TextField fx:id="sourceField" promptText="Source" styleClass="input-field" />
+    <TextField fx:id="destinationField" promptText="Destination" styleClass="input-field" />
+    <TextField fx:id="planeIdField" promptText="Plane ID" styleClass="input-field" />
+    <TextField fx:id="airlineField" promptText="Airline" styleClass="input-field" />
+
+    <Button onAction="#onUpdateButtonClick" prefHeight="50.0" prefWidth="150.0" styleClass="update-button" text="Update">
+        <font>
+            <Font name="Arial Bold" size="18.0" />
+        </font>
+    </Button>
+
+    <Label fx:id="feedbackLabel" styleClass="feedback-label" text="" visible="false">
+        <font>
+            <Font name="Arial" size="16.0" />
+        </font>
+    </Label>
+    <Button onAction="#goBack" prefHeight="62.0" prefWidth="152.0" text="Back" textFill="#da1212">
+        <font>
+            <Font name="Microsoft Uighur Bold" size="27.0" />
+        </font>
+    </Button>
 </VBox>

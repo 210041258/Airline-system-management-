@@ -7,12 +7,12 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class ContactSupportPage extends Application {
+public class ViewFlightsPage extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(ContactSupportPage.class.getResource("HelpSupport/ContactSupportPage.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 800, 600);
-        stage.setTitle("Contact Support");
+        FXMLLoader fxmlLoader = new FXMLLoader(ViewFlightsPage.class.getResource("Flight Management/ViewFlightsPage.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 920, 640);
+        stage.setTitle("Hello!");
         stage.setScene(scene);
         stage.show();
     }
