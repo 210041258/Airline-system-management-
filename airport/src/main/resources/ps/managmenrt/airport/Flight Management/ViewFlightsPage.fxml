@@ -2,21 +2,38 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
-<VBox alignment="BOTTOM_CENTER" prefHeight="427.0" prefWidth="871.0" spacing="20.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ps.managmenrt.airport.ViewFlightsPage_controller">
+<?import javafx.scene.text.Font?>
+<VBox alignment="TOP_CENTER" prefHeight="500.0" prefWidth="900.0" spacing="20.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ps.managmenrt.airport.ViewFlightsPage_controller">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
 
-    <Label fx:id="welcomeText" textFill="RED">
-      <font>
-         <Font name="Marlett" size="34.0" />
-      </font></Label>
-    <Button onAction="#onHelloButtonClick" prefHeight="73.0" prefWidth="113.0" text="Hello!" textFill="#da1212">
-      <font>
-         <Font name="Microsoft Uighur Bold" size="27.0" />
-      </font></Button>
+    <Button text="View Flights" style="-fx-font-size: 28; -fx-text-fill: #E74C3C;" disable="true" />
+
+    <TableView fx:id="flightsTable" prefHeight="300.0" prefWidth="800.0">
+        <columns>
+            <TableColumn text="Flight ID" fx:id="flightIdColumn" prefWidth="150.0" />
+            <TableColumn text="Source" fx:id="sourceColumn" prefWidth="200.0" />
+            <TableColumn text="Destination" fx:id="destinationColumn" prefWidth="200.0" />
+            <TableColumn text="Plane ID" fx:id="planeIdColumn" prefWidth="150.0" />
+            <TableColumn text="Airline" fx:id="airlineColumn" prefWidth="100.0" />
+        </columns>
+    </TableView>
+
+    <HBox alignment="CENTER" spacing="20.0">
+        <Button onAction="#onAddFlightClick" text="Add Flight" />
+        <Button onAction="#onEditFlightClick" text="Edit Selected Flight" />
+        <Button onAction="#onDeleteFlightClick" text="Delete Selected Flight" />
+    </HBox>
+    <Button onAction="#goBack" prefHeight="62.0" prefWidth="152.0" text="Back" textFill="#da1212">
+        <font>
+            <Font name="Microsoft Uighur Bold" size="27.0" />
+        </font>
+    </Button>
 </VBox>

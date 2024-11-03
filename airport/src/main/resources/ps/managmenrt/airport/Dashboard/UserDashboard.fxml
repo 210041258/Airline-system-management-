@@ -11,7 +11,7 @@
 
 <VBox alignment="TOP_CENTER" prefHeight="379.0" prefWidth="800.0" spacing="20" style="-fx-background-color: #f0f8ff;" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ps.managmenrt.airport.UserDashboard_controller">
 
-    <Label fx:id="welcomeLabel" prefHeight="45.0" prefWidth="311.0" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #003366;" text="Welcome, [Username]!" />
+    <Label fx:id="welcomeLabel" prefHeight="45.0" prefWidth="311.0" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #003366;" text="Welcome !" />
 
     <GridPane fx:id="buttonGrid" alignment="CENTER" hgap="20" vgap="20">
         <Label style="-fx-font-size: 18px;" text="Choose an Action:" GridPane.columnIndex="0" GridPane.rowIndex="0">
