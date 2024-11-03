@@ -14,8 +14,6 @@ import javafx.scene.control.Button;
 public class UserDashboard_controller {
 
         @FXML
-        private Label welcomeLabel;
-        @FXML
         private Button viewProfileButton;
         @FXML
         private Button viewNotificationsButton;
@@ -36,7 +34,7 @@ public class UserDashboard_controller {
 
     @FXML
     void transacttions(ActionEvent event) {
-        loadPage("Transactions/report_balance.fxml", event, "View Tickets");
+        loadPage("Transactions/report_balance.fxml", event, "View Transacttions");
     }
 
     @FXML
@@ -76,7 +74,5 @@ public class UserDashboard_controller {
         }
     }
 
-    public void initialize(String username) {
-        welcomeLabel.setText("Welcome, " + username + "!");
-    }
+
 }

@@ -45,8 +45,8 @@ import javafx.stage.Stage;
         }
 
         @FXML
-        void Reportbalance(ActionEvent event) {
-            loadPage("Transactions/report_balance.fxml",event,"View Flights");
+        void handleAddBalanceButtonAction(ActionEvent event) {
+            loadPage("Transactions/add_balance.fxml",event,"Add Balance");
         }
 
         @FXML
