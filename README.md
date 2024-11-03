@@ -1,0 +1,1 @@
+## insure you are setuping the main pakcages of the javafx and java to separte runing the program and also if to complete runing insure to work with mysql with passsword and user repectivly as root and Root@2023
