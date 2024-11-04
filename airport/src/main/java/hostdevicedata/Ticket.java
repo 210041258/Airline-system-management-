@@ -68,7 +68,6 @@ public class Ticket {
             PreparedStatement statement = connection.prepareStatement(
                     "UPDATE tickets SET flight_id = ?, passenger_name = ?, date = ?, price = ? WHERE ticket_id = ?");
             statement.setInt(1, flightId);
-            statement.setString(2, passengerName);
             statement.setDate(3, date);
             statement.setDouble(4, price);
             statement.setInt(5, ticketId);

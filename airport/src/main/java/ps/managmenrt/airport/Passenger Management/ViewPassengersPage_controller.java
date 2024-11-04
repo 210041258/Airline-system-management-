@@ -5,13 +5,16 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ViewPassengersPage_controller {
 
@@ -20,38 +23,63 @@ public class ViewPassengersPage_controller {
     @FXML
     private TextField emailField;
     @FXML
-    private TextField balanceField;
+    private PasswordField passwordField;
     @FXML
-    private TextField searchField;
+    private TextField balanceField;
+
     @FXML
     private ListView<String> passengerListView;
 
     private List<String> passengers = new ArrayList<>();
 
     @FXML
+    public void initialize() {
+        passengerListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                populateFieldsWithSelectedPassenger(newValue);
+            }
+        });
+    }
+
+    @FXML
     public void onAddButtonClick() {
         String username = usernameField.getText();
         String email = emailField.getText();
+        String password = passwordField.getText();
         String balance = balanceField.getText();
 
-        if (username.isEmpty() || email.isEmpty() || balance.isEmpty()) {
+        if (username.isEmpty() || email.isEmpty() || password.isEmpty() || balance.isEmpty()) {
             showAlert("Incomplete Fields", "Please fill in all fields.");
             return;
         }
 
-        String passengerInfo = "User: " + username + ", Email: " + email + ", Balance: " + balance;
-        passengers.add(passengerInfo);
-        updatePassengerList();
-        clearFields();
+        // Check if the username or email already exists
+        boolean usernameExists = passengers.stream().anyMatch(p -> p.contains("User: " + username));
+        boolean emailExists = passengers.stream().anyMatch(p -> p.contains("Email: " + email));
+
+        if (usernameExists || emailExists) {
+            showAlert("Add Failed", "A passenger with this username or email already exists.");
+            return;
+        }
+
+        // Confirm before adding
+        Optional<ButtonType> confirmation = showConfirmationDialog("Confirm Add", "Are you sure you want to add this passenger?");
+        if (confirmation.isPresent() && confirmation.get() == ButtonType.OK) {
+            String passengerInfo = "User: " + username + ", Email: " + email + ", Password: " + password + ", Balance: " + balance;
+            passengers.add(passengerInfo);
+            updatePassengerList();
+            clearFields();
+        }
     }
 
     @FXML
     public void onUpdateButtonClick() {
         String username = usernameField.getText();
         String email = emailField.getText();
+        String password = passwordField.getText();
         String balance = balanceField.getText();
 
-        if (username.isEmpty() || email.isEmpty() || balance.isEmpty()) {
+        if (username.isEmpty() || email.isEmpty() || password.isEmpty() || balance.isEmpty()) {
             showAlert("Incomplete Fields", "Please fill in all fields.");
             return;
         }
@@ -59,14 +87,21 @@ public class ViewPassengersPage_controller {
         boolean found = false;
         for (int i = 0; i < passengers.size(); i++) {
             if (passengers.get(i).contains("User: " + username)) {
-                passengers.set(i, "User: " + username + ", Email: " + email + ", Balance: " + balance);
-                found = true;
-                break;
+                // Confirm before updating
+                Optional<ButtonType> confirmation = showConfirmationDialog("Confirm Update", "Passenger found. Do you want to update this passenger's details?");
+                if (confirmation.isPresent() && confirmation.get() == ButtonType.OK) {
+                    passengers.set(i, "User: " + username + ", Email: " + email + ", Password: " + password + ", Balance: " + balance);
+                    found = true;
+                    break;
+                }
             }
         }
 
         if (!found) {
-            showAlert("Passenger Not Found", "No passenger found with username: " + username);
+            Optional<ButtonType> addConfirmation = showConfirmationDialog("Add New Passenger", "No passenger found with this username. Do you want to add this as a new passenger?");
+            if (addConfirmation.isPresent() && addConfirmation.get() == ButtonType.OK) {
+                onAddButtonClick();
+            }
         }
 
         updatePassengerList();
@@ -85,37 +120,33 @@ public class ViewPassengersPage_controller {
         boolean removed = passengers.removeIf(passenger -> passenger.contains("User: " + username));
 
         if (!removed) {
-            showAlert("Passenger Not Found", "No passenger found with username: " + username);
+            showAlert("Delete Failed", "No passenger found with username: " + username);
+        } else {
+            showAlert("Delete Success", "Passenger with username " + username + " has been deleted.");
         }
 
         updatePassengerList();
         clearFields();
     }
-
     @FXML
     public void onSearchButtonClick() {
-        String username = searchField.getText().trim();
-
-        passengerListView.getItems().clear();
+        String username = usernameField.getText().trim();
 
         if (username.isEmpty()) {
-            updatePassengerList();  // Display all if search is empty
-            showAlert("Username is Nothing", "Username given is null (Empty textfiled)!!  ");
+            showAlert("Search Failed", "Please enter a username for searching.");
             return;
         }
 
-        boolean found = false;
-        for (String passenger : passengers) {
-            if (passenger.toLowerCase().contains("user: " + username.toLowerCase())) {
-                passengerListView.getItems().add(passenger);
-                found = true;
-            }
-        }
+        boolean found = passengers.stream()
+                .anyMatch(passenger -> passenger.trim().toLowerCase().startsWith("user: " + username.toLowerCase()));
 
-        if (!found) {
-            showAlert("No Results", "No passengers found matching: " + username);
+        if (found) {
+            showAlert("Search Result", "Passenger found: " + username);
+        } else {
+            showAlert("Search Result", "No passenger found with username: " + username);
         }
     }
+
 
     private void updatePassengerList() {
         passengerListView.getItems().clear();
@@ -125,8 +156,8 @@ public class ViewPassengersPage_controller {
     private void clearFields() {
         usernameField.clear();
         emailField.clear();
+        passwordField.clear();
         balanceField.clear();
-        searchField.clear();
     }
 
     private void showAlert(String title, String message) {
@@ -135,6 +166,29 @@ public class ViewPassengersPage_controller {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    private Optional<ButtonType> showConfirmationDialog(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        return alert.showAndWait();
+    }
+
+    private void populateFieldsWithSelectedPassenger(String passengerInfo) {
+        String[] details = passengerInfo.split(", ");
+        for (String detail : details) {
+            if (detail.startsWith("User: ")) {
+                usernameField.setText(detail.substring(6));
+            } else if (detail.startsWith("Email: ")) {
+                emailField.setText(detail.substring(7));
+            } else if (detail.startsWith("Password: ")) {
+                passwordField.setText(detail.substring(10));
+            } else if (detail.startsWith("Balance: ")) {
+                balanceField.setText(detail.substring(9));
+            }
+        }
     }
 
     @FXML

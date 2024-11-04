@@ -55,6 +55,11 @@ import javafx.stage.Stage;
         }
 
         @FXML
+        void handleviewticketButtonAction(ActionEvent event) {
+            loadPage("Ticket Booking/ViewTicket.fxml",event,"View Tickets");
+        }
+
+        @FXML
         void handleViewStaffButtonAction(ActionEvent event) {
             loadPage("Staff Management/ViewStaffPage.fxml",event,"View Staff");
         }
