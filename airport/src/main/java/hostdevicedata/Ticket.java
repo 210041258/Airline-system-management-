@@ -187,12 +187,13 @@ public class Ticket {
 
     public static void createTable() {
         String createTableSQL = "CREATE TABLE IF NOT EXISTS tickets ("
-                + "ticket_id INT AUTO_INCREMENT PRIMARY KEY, "
-                + "flight_id INT NOT NULL, "
-                + "start_date DATE NOT NULL, "
-                + "end_date DATE NOT NULL, "
-                + "price DOUBLE NOT NULL"
-                + ")";
+        + "ticket_id INT AUTO_INCREMENT PRIMARY KEY, "
+        + "flight_id INT NOT NULL, "
+        + "start_date DATE NOT NULL, "
+        + "end_date DATE NOT NULL, "
+        + "price DOUBLE NOT NULL, "
+        + "FOREIGN KEY (flight_id) REFERENCES flights(flight_id)"
+        + ")";
 
         try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
              Statement statement = connection.createStatement()) {
@@ -321,6 +322,18 @@ public class Ticket {
         return tickets;
     }
 
+
+    private void autoUpdateDatabase() {
+        updateInDatabase(
+            this.flightId,
+            new java.sql.Date(this.startDate.getTime()),
+            new java.sql.Date(this.endDate.getTime()),
+            this.price,
+            this.ticketId
+        );
+    }
+
+
     public int getTicketId() {
         return ticketId;
     }
@@ -335,7 +348,7 @@ public class Ticket {
 
     public void setFlightId(int flightId) {
         this.flightId = flightId;
-        updateInDatabase();
+        autoUpdateDatabase();
     }
 
     public Date getStartDate() {
@@ -344,7 +357,7 @@ public class Ticket {
 
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
-        updateInDatabase();
+        autoUpdateDatabase();
     }
 
     public Date getEndDate() {
@@ -353,7 +366,7 @@ public class Ticket {
 
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
-        updateInDatabase();
+        autoUpdateDatabase();
     }
 
     public double getPrice() {
@@ -362,7 +375,7 @@ public class Ticket {
 
     public void setPrice(double price) {
         this.price = price;
-        updateInDatabase();
+        autoUpdateDatabase();
     }
 
 }

@@ -7,6 +7,10 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.*;
 import mysql.CreateusersIfNotExists;
@@ -50,6 +54,7 @@ public class SignupPage_controller {
                         statement.setString(4, "100000");
                         int rowsAffected = statement.executeUpdate();
                         if (rowsAffected > 0) {
+                            createSessionFile(username);
                             loadDashboard("Dashboard/UserDashboard.fxml", "User Dashboard");
                         } else {
                             System.err.println("Signup failed: Unexpected error inserting user.");
@@ -71,7 +76,32 @@ public class SignupPage_controller {
     }
 
 
+    public void createSessionFile(String username) {
+        String fileName = username + "_session.txt";
+        File sessionFile = new File(fileName);
 
+        File directory = new File(".");
+
+        File[] files = directory.listFiles((dir, name) -> name.contains("_session.txt"));
+
+        if (files != null) {
+            for (File file : files) {
+                if (file.delete()) {
+                } else {
+                    System.out.println("Failed to delete file: " + file.getName());
+                }
+            }
+        }
+
+        // Create the new session file for the provided username
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(sessionFile))) {
+            writer.write("Username: " + username);
+            writer.newLine();  // Adding a new line for better formatting
+            System.out.println("New session file created: " + sessionFile.getName());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     private boolean validateInput(String username, String email, String password, String confirmPassword) {
         if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
             return false;

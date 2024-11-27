@@ -14,17 +14,28 @@
         <junit.version>5.10.2</junit.version>
     </properties>
 
+    <repositories>
+        <!-- OpenJFX Maven Repository -->
+        <repository>
+            <id>openjfx-repo</id>
+            <url>https://maven-central.storage.googleapis.com/org/openjfx</url>
+        </repository>
+    </repositories>
+
     <dependencies>
+        <!-- JavaFX 23 dependencies -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>22.0.1</version>
+            <version>23</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>22.0.1</version>
+            <version>23</version>
         </dependency>
+
+        <!-- FormsFX dependency -->
         <dependency>
             <groupId>com.dlsc.formsfx</groupId>
             <artifactId>formsfx-core</artifactId>
@@ -36,6 +47,8 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <!-- JUnit dependencies for testing -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>

@@ -1,5 +1,6 @@
 package ps.managmenrt.airport;
 
+import hostdevicedata.staff;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -9,10 +10,6 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 
 public class AddStaffPage_controller {
 
@@ -28,37 +25,33 @@ public class AddStaffPage_controller {
     @FXML
     private TextField jobPositionField;
 
-    private final String DB_URL = "jdbc:mysql://localhost:3306/your_database";
-    private final String DB_USER = "root";
-    private final String DB_PASS = "Root@2023";
-
     @FXML
     private void onAddButtonClick() {
         String email = emailField.getText();
         String username = usernameField.getText();
-        String salary = salaryField.getText();
+        String salaryText = salaryField.getText();
         String jobPosition = jobPositionField.getText();
 
-        if (email.isEmpty() || username.isEmpty() || salary.isEmpty() || jobPosition.isEmpty()) {
+        if (email.isEmpty() || username.isEmpty() || salaryText.isEmpty() || jobPosition.isEmpty()) {
             showAlert("Input Error", "Please fill in all fields.");
             return;
         }
 
-        String query = "INSERT INTO staff (email, username, salary, job_position) VALUES (?, ?, ?, ?)";
-        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
-             PreparedStatement statement = connection.prepareStatement(query)) {
-
-            statement.setString(1, email);
-            statement.setString(2, username);
-            statement.setString(3, salary);
-            statement.setString(4, jobPosition);
-            statement.executeUpdate();
-
-            showAlert("Success", "Staff member added successfully!");
-
-        } catch (SQLException e) {
-            showAlert("Database Error", "Failed to add staff: " + e.getMessage());
+        double salary;
+        try {
+            salary = Double.parseDouble(salaryText);
+        } catch (NumberFormatException e) {
+            showAlert("Input Error", "Salary must be a valid number.");
+            return;
         }
+
+        // Create a new staff object
+        staff newStaff = new staff(username, email, salary, jobPosition);
+
+        // Insert or update the staff record in the database
+        staff.insertOrUpdateStaff(newStaff);
+
+        showAlert("Success", "Staff member added successfully!");
     }
 
     private void showAlert(String title, String message) {
@@ -83,7 +76,4 @@ public class AddStaffPage_controller {
             e.printStackTrace();
         }
     }
-
-
 }
-

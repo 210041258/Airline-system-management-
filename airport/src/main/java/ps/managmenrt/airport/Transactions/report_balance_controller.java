@@ -1,5 +1,6 @@
 package ps.managmenrt.airport;
-
+import java.util.Timer;
+import java.util.TimerTask;
 import javafx.fxml.FXML;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -9,89 +10,80 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ListView;
 import javafx.stage.Stage;
+import hostdevicedata.transactions;  // Import the transactions class
+
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.List;
 
 public class report_balance_controller {
+
     @FXML
-    private ListView<String> usernameListView;
+    private ListView<String> transactionListView; // ListView to display transactions
 
-    private ObservableList<String> usernames = FXCollections.observableArrayList();
+    private ObservableList<String> transactionDetails = FXCollections.observableArrayList(); // ObservableList for binding data
 
+    // Method that runs when the controller is initialized
     @FXML
     public void initialize() {
-        loadUsernames();
+        loadTransactions(); // Load transaction data
     }
 
-    private void loadUsernames() {
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/airport_management", "root", "password")) {
-            PreparedStatement statement = connection.prepareStatement("SELECT username FROM users");
-            ResultSet resultSet = statement.executeQuery();
-
-            while (resultSet.next()) {
-                usernames.add(resultSet.getString("username"));
+    // Load transaction data from the database
+    private void loadTransactions() {
+        try {
+            List<transactions> transactionsList = transactions.loadAllTransactionsFromDatabase(); // Fetch transactions
+            // Populate the ListView with transaction strings
+            for (transactions transaction : transactionsList) {
+                String transactionString = "Username: " + transaction.getUsername() +
+                        ", Amount: " + transaction.getAmount() +
+                        ", Date: " + transaction.getDate() +
+                        ", Type: " + transaction.getTypeTransaction() +
+                        ", Message: " + transaction.getTransactionMessage();
+                transactionDetails.add(transactionString); // Add to the observable list
             }
-            usernameListView.setItems(usernames);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            showAlert("Database Error", "Unable to load usernames.");
+
+            transactionListView.setItems(transactionDetails); // Bind the data to the ListView
+        }
+        catch (NullPointerException e) {
+                showAlert("error not existing !@!", "data flow not complete ! security issues 606 ! ");
         }
     }
 
+    // Method to handle clicking on a transaction in the ListView
     @FXML
     public void onViewTransactionsClick() {
-        String selectedUsername = usernameListView.getSelectionModel().getSelectedItem();
+        String selectedTransaction = transactionListView.getSelectionModel().getSelectedItem();
 
-        if (selectedUsername != null) {
-            viewTransactionsForUser(selectedUsername);
+        if (selectedTransaction != null) {
+            showAlert("Selected Transaction", selectedTransaction); // Show an alert with selected transaction details
         } else {
-            showAlert("Selection Error", "Please select a username to view transactions.");
+            showAlert("Selection Error", "Please select a transaction to view."); // Show an error if no transaction is selected
         }
     }
 
-    private void viewTransactionsForUser(String username) {
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/airport_management", "root", "password")) {
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM transactions WHERE username = ?");
-            statement.setString(1, username);
-            ResultSet resultSet = statement.executeQuery();
-
-            StringBuilder transactionDetails = new StringBuilder("Transactions for " + username + ":\n");
-            while (resultSet.next()) {
-                transactionDetails.append("Transaction ID: ").append(resultSet.getInt("transaction_id"))
-                        .append(", Amount: ").append(resultSet.getDouble("amount"))
-                        .append(", Date: ").append(resultSet.getDate("date")).append("\n");
-            }
-            showAlert("Transactions", transactionDetails.toString());
-        } catch (SQLException e) {
-            e.printStackTrace();
-            showAlert("Database Error", "Unable to retrieve transactions for " + username);
-        }
-    }
-
+    // Method to handle the 'Back' button click event
     @FXML
     public void onBackClick() {
         try {
+            // Load the User Dashboard scene
             FXMLLoader loader = new FXMLLoader(getClass().getResource("Dashboard/UserDashboard.fxml"));
             Parent root = loader.load();
-            Stage stage = (Stage) usernameListView.getScene().getWindow();
+            Stage stage = (Stage) transactionListView.getScene().getWindow();
             Scene scene = new Scene(root);
             stage.setScene(scene);
             stage.setTitle("User Dashboard");
             stage.show();
         } catch (IOException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // Handle any I/O exceptions when loading the scene
         }
     }
 
+    // Helper method to display alerts
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
-        alert.showAndWait();
+        alert.showAndWait(); // Show the alert to the user
     }
 }

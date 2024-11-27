@@ -1,5 +1,6 @@
 package ps.managmenrt.airport;
 
+import hostdevicedata.staff;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -9,9 +10,6 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class UpdateStaffPage_controller {
@@ -28,13 +26,8 @@ public class UpdateStaffPage_controller {
     @FXML
     private TextField jobPositionField;
 
-    private final String DB_URL = "jdbc:mysql://localhost:3306/your_database";
-    private final String DB_USER = "root";
-    private final String DB_PASS = "Root@2023";
-
     private String staffEmail; // Email of the staff member to be updated
 
-    // Method to populate fields with existing staff information
     public void setStaffDetails(String email, String username, String salary, String jobPosition) {
         this.staffEmail = email;
         emailField.setText(email);
@@ -47,29 +40,27 @@ public class UpdateStaffPage_controller {
     private void onUpdateButtonClick() {
         String email = emailField.getText();
         String username = usernameField.getText();
-        String salary = salaryField.getText();
+        String salaryStr = salaryField.getText();
         String jobPosition = jobPositionField.getText();
 
-        if (email.isEmpty() || username.isEmpty() || salary.isEmpty() || jobPosition.isEmpty()) {
+        if (email.isEmpty() || username.isEmpty() || salaryStr.isEmpty() || jobPosition.isEmpty()) {
             showAlert("Input Error", "Please fill in all fields.");
             return;
         }
 
-        String query = "UPDATE staff SET username = ?, salary = ?, job_position = ? WHERE email = ?";
-        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
-             PreparedStatement statement = connection.prepareStatement(query)) {
-
-            statement.setString(1, username);
-            statement.setString(2, salary);
-            statement.setString(3, jobPosition);
-            statement.setString(4, staffEmail);
-            statement.executeUpdate();
-
-            showAlert("Success", "Staff member updated successfully!");
-
-        } catch (SQLException e) {
-            showAlert("Database Error", "Failed to update staff: " + e.getMessage());
+        double salary;
+        try {
+            salary = Double.parseDouble(salaryStr);
+        } catch (NumberFormatException e) {
+            showAlert("Input Error", "Salary must be a valid number.");
+            return;
         }
+
+        // Create a staff object with the updated details
+        staff updatedStaff = new staff(username, email, salary, jobPosition);
+
+        staff.insertOrUpdateStaff(updatedStaff);
+        showAlert("Success", "Staff member updated successfully!");
     }
 
     private void showAlert(String title, String message) {
@@ -79,6 +70,7 @@ public class UpdateStaffPage_controller {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
     @FXML
     public void goBack() {
         try {
@@ -93,6 +85,4 @@ public class UpdateStaffPage_controller {
             e.printStackTrace();
         }
     }
-
 }
-

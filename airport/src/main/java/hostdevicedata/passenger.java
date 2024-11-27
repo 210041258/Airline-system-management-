@@ -1,11 +1,11 @@
-package ps.managmenrt.airport;
+package hostdevicedata;
 
 import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Passenger {
+public class passenger {
 
     private static final String DB_URL = "jdbc:mysql://localhost:3306/user_databases";
     private static final String DB_USER = "root";
@@ -17,13 +17,22 @@ public class Passenger {
     private String email;
     private double balance;
 
-    // Constructor
-    public Passenger(int id, String username, String password, String email, double balance) {
+    // Constructor for creating a new passenger with the id
+    public passenger(int id, String username, String password, String email, double balance) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.email = email;
         this.balance = balance;
+    }
+
+    // Constructor for creating a passenger without id
+    public passenger(String username, String password, String email, double balance) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.balance = balance;
+        createpassengerTable();
     }
 
     // Getters and Setters
@@ -41,7 +50,7 @@ public class Passenger {
 
     public void setUsername(String username) {
         this.username = username;
-        updatePassengerInDB("username", username);
+        updatepassengerInDB("username", username);
     }
 
     public String getPassword() {
@@ -50,7 +59,7 @@ public class Passenger {
 
     public void setPassword(String password) {
         this.password = password;
-        updatePassengerInDB("password", password);
+        updatepassengerInDB("password", password);
     }
 
     public String getEmail() {
@@ -59,7 +68,7 @@ public class Passenger {
 
     public void setEmail(String email) {
         this.email = email;
-        updatePassengerInDB("email", email);
+        updatepassengerInDB("email", email);
     }
 
     public double getBalance() {
@@ -68,12 +77,12 @@ public class Passenger {
 
     public void setBalance(double balance) {
         this.balance = balance;
-        updatePassengerInDB("balance", String.valueOf(balance));
+        updatepassengerInDB("balance", String.valueOf(balance));
     }
 
     // Method to create the passengers table if it does not exist
-    public static void createPassengerTable() {
-        String createPassengerTableSQL = "CREATE TABLE IF NOT EXISTS passengers (" +
+    public static void createpassengerTable() {
+        String createpassengerTableSQL = "CREATE TABLE IF NOT EXISTS passengers (" +
                 "id INT AUTO_INCREMENT PRIMARY KEY, " +
                 "username VARCHAR(50) NOT NULL UNIQUE, " +
                 "password VARCHAR(100) NOT NULL, " +
@@ -83,15 +92,15 @@ public class Passenger {
 
         try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
              Statement statement = connection.createStatement()) {
-            statement.executeUpdate(createPassengerTableSQL);
-            System.out.println("Passenger table created or already exists.");
+            statement.executeUpdate(createpassengerTableSQL);
+            System.out.println("passenger table created or already exists.");
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     // Method to insert or update a passenger record in the database
-    private void updatePassengerInDB(String field, String newValue) {
+    private void updatepassengerInDB(String field, String newValue) {
         String updateSQL = "UPDATE passengers SET " + field + " = ? WHERE id = ?";
 
         try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
@@ -99,22 +108,22 @@ public class Passenger {
             preparedStatement.setString(1, newValue);
             preparedStatement.setInt(2, this.id);
             preparedStatement.executeUpdate();
-            System.out.println("Passenger " + field + " updated to " + newValue + " in the database.");
+            System.out.println("passenger " + field + " updated to " + newValue + " in the database.");
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     // Method to insert a new passenger or update an existing one
-    public static void insertOrUpdatePassengerToDB(Passenger passenger) {
+    public static void insertOrUpdatepassengerToDB(passenger passenger) {
         String checkIfExistsSQL = "SELECT COUNT(*) FROM passengers WHERE username = ?";
         String updateSQL = "UPDATE passengers SET " +
-                           "password = COALESCE(?, password), " +
-                           "email = COALESCE(?, email), " +
-                           "balance = COALESCE(?, balance) " +
-                           "WHERE username = ?";
+                "password = COALESCE(?, password), " +
+                "email = COALESCE(?, email), " +
+                "balance = COALESCE(?, balance) " +
+                "WHERE username = ?";
         String insertSQL = "INSERT INTO passengers (username, password, email, balance) VALUES (?, ?, ?, ?)";
-    
+
         try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
             // Check if the passenger already exists
             try (PreparedStatement checkStatement = connection.prepareStatement(checkIfExistsSQL)) {
@@ -122,17 +131,16 @@ public class Passenger {
                 ResultSet resultSet = checkStatement.executeQuery();
                 resultSet.next();
                 int count = resultSet.getInt(1);
-    
+
                 // If the passenger exists, update it; otherwise, insert a new record
                 if (count > 0) {
                     try (PreparedStatement preparedStatement = connection.prepareStatement(updateSQL)) {
-                        // Set parameters for COALESCE
                         preparedStatement.setString(1, passenger.getPassword());
                         preparedStatement.setString(2, passenger.getEmail());
                         preparedStatement.setDouble(3, passenger.getBalance());
                         preparedStatement.setString(4, passenger.getUsername()); // Set username last
                         preparedStatement.executeUpdate();
-                        System.out.println("Passenger record updated.");
+                        System.out.println("passenger record updated.");
                     }
                 } else {
                     try (PreparedStatement preparedStatement = connection.prepareStatement(insertSQL)) {
@@ -141,7 +149,7 @@ public class Passenger {
                         preparedStatement.setString(3, passenger.getEmail());
                         preparedStatement.setDouble(4, passenger.getBalance());
                         preparedStatement.executeUpdate();
-                        System.out.println("Passenger record inserted.");
+                        System.out.println("passenger record inserted.");
                     }
                 }
             }
@@ -151,7 +159,7 @@ public class Passenger {
     }
 
     // Method to delete a passenger record by username
-    public static void deletePassengerByUsername(String username) {
+    public static void deletepassengerByUsername(String username) {
         String deleteSQL = "DELETE FROM passengers WHERE username = ?";
 
         try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
@@ -159,9 +167,9 @@ public class Passenger {
             preparedStatement.setString(1, username);
             int rowsAffected = preparedStatement.executeUpdate();
             if (rowsAffected > 0) {
-                System.out.println("Passenger deleted.");
+                System.out.println("passenger deleted.");
             } else {
-                System.out.println("Passenger with username " + username + " not found.");
+                System.out.println("passenger with username " + username + " not found.");
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -169,9 +177,9 @@ public class Passenger {
     }
 
     // Method to search for a passenger by username
-    public static Passenger searchByUsername(String username) {
+    public static passenger searchByUsername(String username) {
         String query = "SELECT * FROM passengers WHERE username = ?";
-        Passenger passenger = null;
+        passenger passenger = null;
 
         try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -179,16 +187,16 @@ public class Passenger {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                passenger = new Passenger(
+                passenger = new passenger(
                         resultSet.getInt("id"),
                         resultSet.getString("username"),
                         resultSet.getString("password"),
                         resultSet.getString("email"),
                         resultSet.getDouble("balance")
                 );
-                System.out.println("Passenger found: " + passenger.getUsername());
+                System.out.println("passenger found: " + passenger.getUsername());
             } else {
-                System.out.println("Passenger with username " + username + " not found.");
+                System.out.println("passenger with username " + username + " not found.");
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -196,19 +204,17 @@ public class Passenger {
         return passenger;
     }
 
-    // Method to search for passengers by balance range
-    public static List<Passenger> searchByBalanceRange(double minBalance, double maxBalance) {
-        String query = "SELECT * FROM passengers WHERE balance BETWEEN ? AND ?";
-        List<Passenger> passengerList = new ArrayList<>();
+    // Method to retrieve all passengers from the database
+    public static List<passenger> getAllpassengers() {
+        String query = "SELECT * FROM passengers";
+        List<passenger> passengerList = new ArrayList<>();
 
         try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setDouble(1, minBalance);
-            preparedStatement.setDouble(2, maxBalance);
-            ResultSet resultSet = preparedStatement.executeQuery();
+             PreparedStatement preparedStatement = connection.prepareStatement(query);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
 
             while (resultSet.next()) {
-                Passenger passenger = new Passenger(
+                passenger passenger = new passenger(
                         resultSet.getInt("id"),
                         resultSet.getString("username"),
                         resultSet.getString("password"),
@@ -218,18 +224,16 @@ public class Passenger {
                 passengerList.add(passenger);
             }
 
-            if (passengerList.isEmpty()) {
-                System.out.println("No passengers found in the balance range.");
-            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return passengerList;
     }
 
-    public static void storeToFile(List<Passenger> passengerList, String filename) {
+    // Method to store passenger data to a file
+    public static void storeToFile(List<passenger> passengerList, String filename) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(filename))) {
-            for (Passenger passenger : passengerList) {
+            for (passenger passenger : passengerList) {
                 String line = passenger.getId() + "," +
                         passenger.getUsername() + "," +
                         passenger.getPassword() + "," +
@@ -238,14 +242,14 @@ public class Passenger {
                 bw.write(line);
                 bw.newLine();
             }
-            System.out.println("Passenger data stored to " + filename + " successfully.");
+            System.out.println("passenger data stored to " + filename + " successfully.");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     // Method to load passengers from a text file and store them in the database
-    public static void loadPassengersFromFile(String filename) {
+    public static void loadpassengersFromFile(String filename) {
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
             String line;
             while ((line = br.readLine()) != null) {
@@ -257,53 +261,13 @@ public class Passenger {
                     String email = data[3].trim();
                     double balance = Double.parseDouble(data[4].trim());
 
-                    Passenger passenger = new Passenger(id, username, password, email, balance);
-                    insertOrUpdatePassengerToDB(passenger);
+                    passenger passenger = new passenger(id, username, password, email, balance);
+                    insertOrUpdatepassengerToDB(passenger);
                 }
             }
-            System.out.println("Passengers loaded from " + filename + " successfully.");
+            System.out.println("passengers loaded from " + filename + " successfully.");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-    // Method to retrieve all passengers from the database
-    public static List<Passenger> getAllPassengers() {
-        String query = "SELECT * FROM passengers";
-        List<Passenger> passengerList = new ArrayList<>();
-
-        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-             PreparedStatement preparedStatement = connection.prepareStatement(query);
-             ResultSet resultSet = preparedStatement.executeQuery()) {
-
-            while (resultSet.next()) {
-                Passenger passenger = new Passenger(
-                        resultSet.getInt("id"),
-                        resultSet.getString("username"),
-                        resultSet.getString("password"),
-                        resultSet.getString("email"),
-                        resultSet.getDouble("balance")
-                );
-                passengerList.add(passenger);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return passengerList;
-    }
-
-    // Method to load and store passengers from a text file to the database and back to a text file
-    public static void loadAndStorePassengers(String loadFilename, String storeFilename) {
-        // Load passengers from text file into the database
-        loadPassengersFromFile(loadFilename);
-
-        // Retrieve all passengers from the database
-        List<Passenger> passengers = getAllPassengers();
-
-        // Store passengers into a text file
-        storeToFile(passengers, storeFilename);
-    }
-
-
 }

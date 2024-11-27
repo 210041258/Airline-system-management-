@@ -1,6 +1,7 @@
 package ps.managmenrt.airport;
 
-
+import hostdevicedata.Flight;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -9,60 +10,79 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.MapValueFactory;
 import javafx.stage.Stage;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class ViewFlightsPage_controller {
     @FXML
     private TableView<Map<String, String>> flightsTable;
 
     @FXML
-    private TableColumn<Map, String> flightIdColumn;
+    private TableColumn<Map<String, String>, String> flightIdColumn;
 
     @FXML
-    private TableColumn<Map, String> sourceColumn;
+    private TableColumn<Map<String, String>, String> sourceColumn;
 
     @FXML
-    private TableColumn<Map, String> destinationColumn;
+    private TableColumn<Map<String, String>, String> destinationColumn;
 
     @FXML
-    private TableColumn<Map, String> planeIdColumn;
+    private TableColumn<Map<String, String>, String> dateColumn;
 
     @FXML
-    private TableColumn<Map, String> airlineColumn;
+    private TableColumn<Map<String, String>, String> timeColumn;
+
+    @FXML
+    private TableColumn<Map<String, String>, String> ownerColumn;
+
+    @FXML
+    private TableColumn<Map<String, String>, String> planeIdColumn;
 
     private ObservableList<Map<String, String>> flightsList;
 
-    private final String DB_URL = "jdbc:mysql://localhost:3306/user_dashboard";
+    private final String DB_URL = "jdbc:mysql://localhost:3306/user_databases";
     private final String DB_USER = "root";
     private final String DB_PASS = "Root@2023";
 
     public void initialize() {
-        // Configure columns
-        flightIdColumn.setCellValueFactory(new MapValueFactory<>("flightId"));
-        sourceColumn.setCellValueFactory(new MapValueFactory<>("source"));
-        destinationColumn.setCellValueFactory(new MapValueFactory<>("destination"));
-        planeIdColumn.setCellValueFactory(new MapValueFactory<>("planeId"));
-        airlineColumn.setCellValueFactory(new MapValueFactory<>("airline"));
+        // Null checks
+        if (flightIdColumn != null) {
+            flightIdColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().get("flightId")));
+        }
+        if (sourceColumn != null) {
+            sourceColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().get("source")));
+        }
+        if (destinationColumn != null) {
+            destinationColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().get("destination")));
+        }
+        if (dateColumn != null) {
+            dateColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().get("date")));
+        }
+        if (timeColumn != null) {
+            timeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().get("time")));
+        }
+        if (ownerColumn != null) {
+            ownerColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().get("owner")));
+        }
+        if (planeIdColumn != null) {
+            planeIdColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().get("planeId")));
+        }
 
-        // Load data from database
         loadFlightsDataFromDatabase();
     }
+
 
     private void loadFlightsDataFromDatabase() {
         flightsList = FXCollections.observableArrayList();
 
-        String query = "SELECT flight_id, source, destination, plane_id, airline FROM flights";
+        String query = "SELECT flight_id, source, destination, date, time, owner, plane_id FROM flights";
         try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
              PreparedStatement statement = connection.prepareStatement(query);
              ResultSet resultSet = statement.executeQuery()) {
@@ -72,8 +92,10 @@ public class ViewFlightsPage_controller {
                 flight.put("flightId", resultSet.getString("flight_id"));
                 flight.put("source", resultSet.getString("source"));
                 flight.put("destination", resultSet.getString("destination"));
+                flight.put("date", resultSet.getString("date"));
+                flight.put("time", resultSet.getString("time"));
+                flight.put("owner", resultSet.getString("owner"));
                 flight.put("planeId", resultSet.getString("plane_id"));
-                flight.put("airline", resultSet.getString("airline"));
 
                 flightsList.add(flight);
             }
@@ -87,46 +109,67 @@ public class ViewFlightsPage_controller {
 
     @FXML
     private void onAddFlightClick(ActionEvent event) {
-        try {
-            Button button = (Button) event.getSource();
-            Scene scene = button.getParent().getScene();
-            Stage stage = (Stage) scene.getWindow();
-            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("Flight Management/AddFlightPage.fxml")));
-            scene.setRoot(root);
-            stage.setTitle("Add Flight");
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        }
+        loadNewScene("Flight Management/AddFlightPage.fxml", "Add Flight");
+    }
 
     @FXML
     private void onEditFlightClick(ActionEvent event) {
+        Map<String, String> selectedFlight = flightsTable.getSelectionModel().getSelectedItem();
+        if (selectedFlight != null) {        saveFlightDataToFile(selectedFlight);
+
+            loadNewScene("Flight Management/UpdateFlightPage.fxml", "Edit Flight");
+        } else {
+            showAlert("Selection Error", "Please select a flight to edit.");
+        }
+    }
+
+    private void saveFlightDataToFile(Map<String, String> selectedFlight) {
         try {
-            Button button = (Button) event.getSource();
-            Scene scene = button.getParent().getScene();
-            Stage stage = (Stage) scene.getWindow();
-            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("Flight Management/UpdateFlightPage.fxml")));
-            scene.setRoot(root);
-            stage.setTitle("Edit Flight");
-            stage.show();
+            File file = new File("selectedFlight.txt");  // Define the file path
+
+            // Create a file if it doesn't exist
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+                // Write the flight data to the file
+                writer.write(selectedFlight.get("flightId") + "\n");
+                writer.write(selectedFlight.get("source") + "\n");
+                writer.write(selectedFlight.get("destination") + "\n");
+                writer.write(selectedFlight.get("planeId") + "\n");
+                writer.write(selectedFlight.get("owner") + "\n");
+            }
         } catch (IOException e) {
-            e.printStackTrace();
+            showAlert("File Error", "Error saving flight data to file: " + e.getMessage());
         }
     }
 
     @FXML
     private void onDeleteFlightClick(ActionEvent event) {
+        Map<String, String> selectedFlight = flightsTable.getSelectionModel().getSelectedItem();
+        if (selectedFlight != null) {
+            int flightId = Integer.parseInt(selectedFlight.get("flightId"));
+            Flight flight = new Flight(flightId, "", "", null, null, "", 0); // Assuming Flight has a method deleteFromDatabase()
+            flight.deleteFromDatabase(); // Delete from the database
+            loadFlightsDataFromDatabase(); // Refresh the table after deletion
+            showAlert("Success", "Flight deleted successfully.");
+        } else {
+            showAlert("Selection Error", "Please select a flight to delete.");
+        }
+    }
+
+    private void loadNewScene(String fxmlPath, String title) {
         try {
-            Button button = (Button) event.getSource();
-            Scene scene = button.getParent().getScene();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            Parent root = loader.load();
+            Scene scene = flightsTable.getScene();
             Stage stage = (Stage) scene.getWindow();
-            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("Flight Management/DeleteFlightPage.fxml")));
             scene.setRoot(root);
-            stage.setTitle("Delete Flight");
+            stage.setTitle(title);
             stage.show();
         } catch (IOException e) {
-            e.printStackTrace();
+            showAlert("Navigation Error", "Failed to load the page: " + e.getMessage());
         }
     }
 
@@ -149,8 +192,7 @@ public class ViewFlightsPage_controller {
             stage.setTitle("Airport Management");
             stage.show();
         } catch (IOException e) {
-            e.printStackTrace();
+            showAlert("Navigation Error", "Failed to go back: " + e.getMessage());
         }
     }
-
 }

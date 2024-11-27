@@ -1,20 +1,18 @@
 package ps.managmenrt.airport;
 
+import hostdevicedata.passenger;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class ViewPassengersPage_controller {
 
@@ -30,10 +28,9 @@ public class ViewPassengersPage_controller {
     @FXML
     private ListView<String> passengerListView;
 
-    private List<String> passengers = new ArrayList<>();
-
     @FXML
     public void initialize() {
+        updatePassengerList();
         passengerListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 populateFieldsWithSelectedPassenger(newValue);
@@ -53,23 +50,11 @@ public class ViewPassengersPage_controller {
             return;
         }
 
-        // Check if the username or email already exists
-        boolean usernameExists = passengers.stream().anyMatch(p -> p.contains("User: " + username));
-        boolean emailExists = passengers.stream().anyMatch(p -> p.contains("Email: " + email));
-
-        if (usernameExists || emailExists) {
-            showAlert("Add Failed", "A passenger with this username or email already exists.");
-            return;
-        }
-
-        // Confirm before adding
-        Optional<ButtonType> confirmation = showConfirmationDialog("Confirm Add", "Are you sure you want to add this passenger?");
-        if (confirmation.isPresent() && confirmation.get() == ButtonType.OK) {
-            String passengerInfo = "User: " + username + ", Email: " + email + ", Password: " + password + ", Balance: " + balance;
-            passengers.add(passengerInfo);
-            updatePassengerList();
-            clearFields();
-        }
+        // Create a new passenger object and insert it into the DB
+        passenger newPassenger = new passenger(username, password, email, Double.parseDouble(balance));
+        newPassenger.insertOrUpdatepassengerToDB(newPassenger);
+        updatePassengerList();
+        clearFields();
     }
 
     @FXML
@@ -84,28 +69,19 @@ public class ViewPassengersPage_controller {
             return;
         }
 
-        boolean found = false;
-        for (int i = 0; i < passengers.size(); i++) {
-            if (passengers.get(i).contains("User: " + username)) {
-                // Confirm before updating
-                Optional<ButtonType> confirmation = showConfirmationDialog("Confirm Update", "Passenger found. Do you want to update this passenger's details?");
-                if (confirmation.isPresent() && confirmation.get() == ButtonType.OK) {
-                    passengers.set(i, "User: " + username + ", Email: " + email + ", Password: " + password + ", Balance: " + balance);
-                    found = true;
-                    break;
-                }
-            }
+        // Search for existing passenger by username
+        passenger existingPassenger = passenger.searchByUsername(username);
+        if (existingPassenger != null) {
+            // Update passenger details
+            existingPassenger.setEmail(email);
+            existingPassenger.setPassword(password);
+            existingPassenger.setBalance(Double.parseDouble(balance));
+            existingPassenger.insertOrUpdatepassengerToDB(existingPassenger); // Save updated passenger to DB
+            updatePassengerList();
+            clearFields();
+        } else {
+            showAlert("Update Failed", "No passenger found with this username.");
         }
-
-        if (!found) {
-            Optional<ButtonType> addConfirmation = showConfirmationDialog("Add New Passenger", "No passenger found with this username. Do you want to add this as a new passenger?");
-            if (addConfirmation.isPresent() && addConfirmation.get() == ButtonType.OK) {
-                onAddButtonClick();
-            }
-        }
-
-        updatePassengerList();
-        clearFields();
     }
 
     @FXML
@@ -117,17 +93,12 @@ public class ViewPassengersPage_controller {
             return;
         }
 
-        boolean removed = passengers.removeIf(passenger -> passenger.contains("User: " + username));
-
-        if (!removed) {
-            showAlert("Delete Failed", "No passenger found with username: " + username);
-        } else {
-            showAlert("Delete Success", "Passenger with username " + username + " has been deleted.");
-        }
-
+        // Delete passenger by username
+        passenger.deletepassengerByUsername(username);
         updatePassengerList();
         clearFields();
     }
+
     @FXML
     public void onSearchButtonClick() {
         String username = usernameField.getText().trim();
@@ -137,20 +108,28 @@ public class ViewPassengersPage_controller {
             return;
         }
 
-        boolean found = passengers.stream()
-                .anyMatch(passenger -> passenger.trim().toLowerCase().startsWith("user: " + username.toLowerCase()));
-
-        if (found) {
-            showAlert("Search Result", "Passenger found: " + username);
+        // Search for passenger by username
+        passenger foundPassenger = passenger.searchByUsername(username);
+        if (foundPassenger != null) {
+            showAlert("Search Result", "Passenger found: " + foundPassenger.getUsername());
+            populateFieldsWithSelectedPassenger(":User " + foundPassenger.getUsername().trim() +
+                    ", Email: " + foundPassenger.getEmail() +
+                    ", Password: " + foundPassenger.getPassword() +
+                    ", Balance: " + foundPassenger.getBalance());
         } else {
             showAlert("Search Result", "No passenger found with username: " + username);
         }
     }
 
-
     private void updatePassengerList() {
         passengerListView.getItems().clear();
-        passengerListView.getItems().addAll(passengers);
+        // Get all passengers from the DB
+        List<passenger> allPassengers = passenger.getAllpassengers();
+
+        // Extract usernames or any other relevant information
+        for (passenger p : allPassengers) {
+            passengerListView.getItems().add(p.getUsername()); // Assuming you want to show the username
+        }
     }
 
     private void clearFields() {
@@ -168,18 +147,10 @@ public class ViewPassengersPage_controller {
         alert.showAndWait();
     }
 
-    private Optional<ButtonType> showConfirmationDialog(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        return alert.showAndWait();
-    }
-
     private void populateFieldsWithSelectedPassenger(String passengerInfo) {
         String[] details = passengerInfo.split(", ");
         for (String detail : details) {
-            if (detail.startsWith("User: ")) {
+            if (detail.startsWith(":User  ")) {
                 usernameField.setText(detail.substring(6));
             } else if (detail.startsWith("Email: ")) {
                 emailField.setText(detail.substring(7));

@@ -1,5 +1,6 @@
 package ps.managmenrt.airport;
 
+import hostdevicedata.passenger;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -36,8 +37,18 @@ public class add_balance_controller {
         }
     }
 
+
     private void updateBalanceInDatabase(String username, double newBalance) {
-        // Implement database update logic here
+        // Search for the passenger by username
+        passenger passengerToUpdate = passenger.searchByUsername(username);
+        if (passengerToUpdate != null) {
+            // Update the passenger's balance
+            passengerToUpdate.setBalance(newBalance);
+            // Optionally, you can call the insertOrUpdatepassengerToDB method to ensure the balance is updated in the database
+            passenger.insertOrUpdatepassengerToDB(passengerToUpdate);
+        } else {
+            showAlert("Error", "Passenger with username " + username + " not found.");
+        }
     }
     @FXML
     public void onBackClick() {

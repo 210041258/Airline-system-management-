@@ -4,11 +4,16 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.sql.*;
 
 public class UpdateFlightPage_controller {
 
@@ -29,10 +34,47 @@ public class UpdateFlightPage_controller {
 
     @FXML
     private Label feedbackLabel;
+
+    private final String DB_URL = "jdbc:mysql://localhost:3306/user_databases";
+    private final String DB_USER = "root";
+    private final String DB_PASS = "Root@2023";
+
     @FXML
     public void initialize() {
         clearFields();
         feedbackLabel.setVisible(false);
+        loadFlightDataFromFile();
+
+    }
+
+    private void loadFlightDataFromFile() {
+        try {
+            File file = new File("selectedFlight.txt");
+            if (file.exists()) {
+                BufferedReader reader = new BufferedReader(new FileReader(file));
+                String flightId = reader.readLine();
+                String source = reader.readLine();
+                String destination = reader.readLine();
+                String planeId = reader.readLine();
+                String airline = reader.readLine();
+
+                // Set the flight data to the form fields
+                setFlightData(flightId, source, destination, planeId, airline);
+
+                reader.close();
+            } else {
+                showAlert("File Error", "Selected flight data file not found.");
+            }
+        } catch (IOException e) {
+            showAlert("File Error", "Error loading flight data from file: " + e.getMessage());
+        }
+    }
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
     private void clearFields() {
         flightIdField.clear();
@@ -41,6 +83,7 @@ public class UpdateFlightPage_controller {
         planeIdField.clear();
         airlineField.clear();
     }
+
     @FXML
     private void onUpdateButtonClick() {
         String flightId = flightIdField.getText();
@@ -66,17 +109,28 @@ public class UpdateFlightPage_controller {
     }
 
     private void updateFlightData(String flightId, String source, String destination, String planeId, String airline) {
-        // Replace with actual database update logic
-        // DatabaseConnector db = new DatabaseConnector();
-        // boolean success = db.updateFlight(flightId, source, destination, planeId, airline);
+        String query = "UPDATE flights SET source = ?, destination = ?, plane_id = ?, owner = ? WHERE flight_id = ?";
 
-        // For example purposes, simulate a successful update
-        boolean success = true;
+        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
+             PreparedStatement statement = connection.prepareStatement(query)) {
 
-        if (success) {
-            showFeedback("Flight " + flightId + " has been updated successfully.", false);
-        } else {
+            statement.setString(1, source);
+            statement.setString(2, destination);
+            statement.setString(3, planeId);
+            statement.setString(4, airline);
+            statement.setString(5, flightId);
+
+            int rowsUpdated = statement.executeUpdate();
+
+            if (rowsUpdated > 0) {
+                showFeedback("Flight " + flightId + " has been updated successfully.", false);
+            } else {
+                showFeedback("Error updating flight. Please try again.", true);
+            }
+
+        } catch (SQLException e) {
             showFeedback("Error updating flight. Please try again.", true);
+            e.printStackTrace();
         }
     }
 
@@ -88,7 +142,6 @@ public class UpdateFlightPage_controller {
         }
         feedbackLabel.setVisible(true);
     }
-
 
     @FXML
     public void goBack() {
@@ -103,5 +156,14 @@ public class UpdateFlightPage_controller {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    // Set the flight data in the fields when editing
+    public void setFlightData(String flightId, String source, String destination, String planeId, String airline) {
+        flightIdField.setText(flightId);
+        sourceField.setText(source);
+        destinationField.setText(destination);
+        planeIdField.setText(planeId);
+        airlineField.setText(airline);
     }
 }

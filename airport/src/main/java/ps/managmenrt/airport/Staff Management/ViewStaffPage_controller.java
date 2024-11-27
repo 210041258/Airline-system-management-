@@ -42,7 +42,7 @@ public class ViewStaffPage_controller {
 
     private ObservableList<Map<String, String>> staffList;
 
-    private final String DB_URL = "jdbc:mysql://localhost:3306/your_database";
+    private final String DB_URL = "jdbc:mysql://localhost:3306/user_databases";
     private final String DB_USER = "root";
     private final String DB_PASS = "Root@2023";
 

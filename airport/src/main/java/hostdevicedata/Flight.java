@@ -27,7 +27,9 @@ public class Flight {
                                   "source VARCHAR(255), " +
                                   "destination VARCHAR(255), " +
                                   "date DATE, " +
-                                  "time TIME)";
+                                  "time TIME, " +
+                                  "owner VARCHAR(255), " + // Added owner column
+                                  "plane_id INT)"; // Ensure plane_id is also included
         try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
              Statement statement = connection.createStatement()) {
             statement.executeUpdate(createTableQuery);
@@ -199,42 +201,47 @@ public class Flight {
         }
     }
 
-    // Auto-update method to update database after any property change
     private void autoUpdateDatabase() {
-        updateInDatabase();
+        updateInDatabase(
+            this.flightId,
+            this.source,
+            this.destination,
+            this.owner,
+            this.planeId,
+            this.date,
+            this.time
+        );
     }
-
-    // Updated set methods
+    
     public void setSource(String source) {
         this.source = source;
         autoUpdateDatabase();
     }
-
+    
     public void setDestination(String destination) {
         this.destination = destination;
         autoUpdateDatabase();
     }
-
+    
     public void setOwner(String owner) {
         this.owner = owner;
         autoUpdateDatabase();
     }
-
+    
     public void setPlaneId(int planeId) {
         this.planeId = planeId;
         autoUpdateDatabase();
     }
-
+    
     public void setDate(Date date) {
         this.date = date;
         autoUpdateDatabase();
     }
-
+    
     public void setTime(Time time) {
         this.time = time;
         autoUpdateDatabase();
     }
-
     // Getters
     public int getFlightId() {
         return flightId;

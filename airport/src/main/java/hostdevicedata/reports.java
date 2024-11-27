@@ -1,18 +1,18 @@
-package ps.managmenrt.airport;
+package hostdevicedata;
 
 import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Report {
+public class reports {
 
     private static final String DB_URL = "jdbc:mysql://localhost:3306/user_databases";
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "Root@2023";
 
 
-    public Report() {
+    public reports() {
         createTables();
     }
 
