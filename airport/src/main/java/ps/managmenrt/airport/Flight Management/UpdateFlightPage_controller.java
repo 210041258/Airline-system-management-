@@ -62,6 +62,14 @@ public class UpdateFlightPage_controller {
                 setFlightData(flightId, source, destination, planeId, airline);
 
                 reader.close();
+
+                // Delete the file after reading
+                if (file.delete()) {
+                    System.out.println("Selected flight data file deleted successfully.");
+                } else {
+                    System.out.println("Failed to delete the selected flight data file.");
+                }
+
             } else {
                 showAlert("File Error", "Selected flight data file not found.");
             }
@@ -69,6 +77,7 @@ public class UpdateFlightPage_controller {
             showAlert("File Error", "Error loading flight data from file: " + e.getMessage());
         }
     }
+
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);

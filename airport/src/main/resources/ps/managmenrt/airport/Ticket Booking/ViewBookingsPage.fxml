@@ -10,8 +10,10 @@
         <Insets top="20" right="20" bottom="20" left="20" />
     </padding>
 
-    <ComboBox fx:id="flightComboBox" promptText="Select Flight" />
+    <ComboBox fx:id="flightComboBox" promptText="Select Flights" />
     <Button fx:id="viewTicketsButton" text="View Tickets" onAction="#onViewTicketsButtonClick" />
     <ListView fx:id="ticketListView" />
     <Button text="Back" onAction="#goBack" />
+    <Button text="View My Ticket" onAction="#gocancel" />
+
 </VBox>

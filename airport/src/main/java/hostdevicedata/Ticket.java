@@ -2,6 +2,7 @@ package hostdevicedata;
 
 import java.io.*;
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,14 +18,44 @@ public class Ticket {
     private static final String DB_PASSWORD = "Root@2023";
     private static final String FILE_PATH = "ticket_index.txt"; 
 
-    private static final String DB_DRIVER = "com.mysql.cj.jdbc.Driver";
-    private static final String show_db_sql_by_flight = "SELECT * FROM ticket WHERE flight_id = ?";
-    private static final String show_db_sql_by_ticket = "SELECT * FROM ticket WHERE ticket_id = ?";
-    private static final String show_db_sql_by_flight_start = "SELECT * FROM ticket WHERE ticket_id = ? AND start_date = ?";
-    private static final String show_db_sql_by_flight_end = "SELECT * FROM ticket WHERE ticket_id = ? AND end_date = ?";
-    private static final String show_db_sql_by_flight_start_end = "SELECT * FROM ticket WHERE ticket_id = ? AND start_date BETWEEN ? AND ? AND end_date BETWEEN ? AND ?";
-    private static final String show_db_sql_by_flight_start_end_ticket = "SELECT * FROM ticket WHERE start_date = ? AND end_date = ? AND ticket_id = ? ";
-    
+    private static final String show_db_sql_by_flight = "SELECT * FROM tickets WHERE flight_id = ?";
+    private static final String show_db_sql_by_ticket = "SELECT * FROM tickets WHERE ticket_id = ?";
+    private static final String show_db_sql_by_flight_start = "SELECT * FROM tickets WHERE start_date = ?";
+    private static final String SHOW_DB_SQL_BY_PRICE_RANGE = "SELECT * FROM tickets WHERE price BETWEEN ? AND ?";
+    private static final String show_db_sql_by_flight_end = "SELECT * FROM tickets WHERE  end_date = ?";
+    private static final String show_db_sql_by_flight_start_end = "SELECT * FROM tickets WHERE ticket_id = ? AND start_date BETWEEN ? AND ? AND end_date BETWEEN ? AND ?";
+    private static final String show_db_sql_by_flight_start_end_ticket = "SELECT * FROM tickets WHERE start_date = ? AND end_date = ? AND ticket_id = ? ";
+    private static final String show_db_sql_by_flight_start_end_with_username =
+            "SELECT * FROM tickets WHERE start_date BETWEEN ? AND ? " +
+                    "AND end_date BETWEEN ? AND ? " +
+                    "AND ticket_id IN (SELECT ticket_id FROM orders WHERE username = ?)";
+
+
+
+    public static List<Ticket> getTicketsByPriceRange(double minPrice, double maxPrice) {
+        List<Ticket> tickets = new ArrayList<>();
+        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+             PreparedStatement statement = connection.prepareStatement(SHOW_DB_SQL_BY_PRICE_RANGE)) {
+
+            statement.setDouble(1, minPrice);
+            statement.setDouble(2, maxPrice);
+
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                Ticket ticket = new Ticket(
+                        resultSet.getInt("ticket_id"),
+                        resultSet.getInt("flight_id"),
+                        resultSet.getDate("start_date"),
+                        resultSet.getDate("end_date"),
+                        resultSet.getDouble("price")
+                );
+                tickets.add(ticket);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return tickets;
+    }
 
     public static Ticket getTicketByFlightAndDateRangeAndTicketId(Date startDate, Date endDate, int ticketId) {
         Ticket ticket = null;
@@ -49,8 +80,38 @@ public class Ticket {
         }
         return ticket;
     }
-    
 
+    public static List<Ticket> getTicketsByFlightAndDateRangeAndUsername(Date startDate, Date endDate, String username) {
+        List<Ticket> tickets = new ArrayList<>();
+        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+             PreparedStatement statement = connection.prepareStatement(show_db_sql_by_flight_start_end_with_username)) {
+
+            // Set the parameters for the query
+            statement.setDate(1, startDate);
+            statement.setDate(2, endDate);
+            statement.setDate(3, startDate); // For end date range
+            statement.setDate(4, endDate); // For end date range
+            statement.setString(5, username); // For username in orders table
+
+            // Execute the query
+            ResultSet resultSet = statement.executeQuery();
+
+            // Process the result set and create Ticket objects
+            while (resultSet.next()) {
+                Ticket ticket = new Ticket(
+                        resultSet.getInt("ticket_id"),
+                        resultSet.getInt("flight_id"),
+                        resultSet.getDate("start_date"),
+                        resultSet.getDate("end_date"),
+                        resultSet.getDouble("price")
+                );
+                tickets.add(ticket);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return tickets;
+    }
     public static List<Ticket> getTicketsByFlightAndDateRange(int ticketId, Date startDate, Date endDate) {
         List<Ticket> tickets = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
@@ -78,13 +139,12 @@ public class Ticket {
         return tickets;
     }
 
-    public static List<Ticket> getTicketsByFlightAndEndDate(int ticketId, Date endDate) {
+    public static List<Ticket> getTicketsByFlightAndEndDate( Date endDate) {
         List<Ticket> tickets = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
              PreparedStatement statement = connection.prepareStatement(show_db_sql_by_flight_end)) {
             
-            statement.setInt(1, ticketId);
-            statement.setDate(2, endDate);
+            statement.setDate(1, endDate);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 Ticket ticket = new Ticket(
@@ -102,13 +162,12 @@ public class Ticket {
         return tickets;
     }
 
-    public static List<Ticket> getTicketsByFlightAndStartDate(int ticketId, Date startDate) {
+    public static List<Ticket> getTicketsByFlightAndStartDate(Date startDate) {
         List<Ticket> tickets = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
              PreparedStatement statement = connection.prepareStatement(show_db_sql_by_flight_start)) {
             
-            statement.setInt(1, ticketId);
-            statement.setDate(2, startDate);
+            statement.setDate(1, startDate);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 Ticket ticket = new Ticket(
@@ -171,9 +230,14 @@ public class Ticket {
         }
         return tickets;
     }
-    
 
 
+    @Override
+    public String toString() {
+        return "Ticket ID: " + ticketId + ", Flight ID: " + flightId +
+                ", Start Date: " + startDate + ", End Date: " + endDate +
+                ", Price: " + price;
+    }
 
 
     public Ticket(int ticketId, int flightId, Date startDate, Date endDate, double price) {
@@ -301,7 +365,7 @@ public class Ticket {
         }
     }
 
-    private static List<Ticket> loadAllTickets() {
+    public static List<Ticket> loadAllTickets() {
         List<Ticket> tickets = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM tickets");

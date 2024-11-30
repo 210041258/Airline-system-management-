@@ -28,6 +28,7 @@ public class SignupPage_controller {
     @FXML
     private PasswordField confirmPasswordField;
 
+
     @FXML
     public void handleSignup() {
         String username = usernameField.getText();
@@ -76,6 +77,7 @@ public class SignupPage_controller {
     }
 
 
+
     public void createSessionFile(String username) {
         String fileName = username + "_session.txt";
         File sessionFile = new File(fileName);
@@ -95,7 +97,7 @@ public class SignupPage_controller {
 
         // Create the new session file for the provided username
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(sessionFile))) {
-            writer.write("Username: " + username);
+            writer.write("Username: " + username.trim().toLowerCase());
             writer.newLine();  // Adding a new line for better formatting
             System.out.println("New session file created: " + sessionFile.getName());
         } catch (IOException e) {

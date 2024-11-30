@@ -1,5 +1,6 @@
 package ps.managmenrt.airport;
 
+import hostdevicedata.Ticket;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -11,6 +12,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 public class PassengerReportsPage_controller {
@@ -26,14 +28,11 @@ public class PassengerReportsPage_controller {
     @FXML
     private Label statusLabel; // Label for status messages
 
-    /**
-     * Method to handle search button click to fetch passenger tickets.
-     */
     @FXML
     private void onSearchButtonClick() {
-        // Get the selected dates
-        var startDate = startDatePicker.getValue();
-        var endDate = endDatePicker.getValue();
+        // Get the selected dates and username
+        LocalDate startDate = startDatePicker.getValue();
+        LocalDate endDate = endDatePicker.getValue();
         String username = usernameField.getText();
 
         // Validate input
@@ -42,38 +41,32 @@ public class PassengerReportsPage_controller {
             return;
         }
 
-        // Fetch tickets based on username and date range
-        List<String> tickets = fetchTickets(username, startDate, endDate);
+        // Call the method to fetch and display the tickets based on user input
+        showUserTickets(username, startDate, endDate);
+    }
 
-        // Update the ListView with fetched tickets
+    private void showUserTickets(String username, LocalDate startDate, LocalDate endDate) {
+        // Clear the current list
+        ticketsListView.getItems().clear();
+
+        // Convert LocalDate to SQL Date for database query
+        java.sql.Date sqlStartDate = java.sql.Date.valueOf(startDate);
+        java.sql.Date sqlEndDate = java.sql.Date.valueOf(endDate);
+
+        // Fetch the tickets based on the username and date range
+        List<Ticket> tickets = Ticket.getTicketsByFlightAndDateRangeAndUsername(sqlStartDate, sqlEndDate, username);
+
+        // Populate the ListView with fetched tickets
         if (tickets.isEmpty()) {
-            statusLabel.setText("No tickets found for the specified criteria.");
+            statusLabel.setText("No tickets found for the selected period.");
         } else {
-            ticketsListView.getItems().clear(); // Clear previous items
-            ticketsListView.getItems().addAll(tickets); // Add new tickets
-            statusLabel.setText("Tickets fetched successfully.");
+            for (Ticket ticket : tickets) {
+                ticketsListView.getItems().add(ticket.toString()); // Assuming Ticket class has a proper toString method
+            }
+            statusLabel.setText(""); // Clear the status label
         }
     }
 
-    /**
-     * Simulated method to fetch tickets from the database or other data source.
-     *
-     * @param username The username of the passenger.
-     * @param startDate The start date for the search period.
-     * @param endDate The end date for the search period.
-     * @return List of tickets matching the criteria.
-     */
-    private List<String> fetchTickets(String username, java.time.LocalDate startDate, java.time.LocalDate endDate) {
-        // Placeholder for ticket retrieval logic. In a real application, this should
-        // query the database or an API to get the tickets for the specified user and dates.
-
-        // Example implementation, replace with actual logic.
-        return List.of("Ticket1 for " + username, "Ticket2 for " + username);
-    }
-
-    /**
-     * Method to handle back button action.
-     */
     @FXML
     private void goBack() {
         try {

@@ -10,5 +10,6 @@
     </padding>
 
     <ListView fx:id="returnTicketListView"/>
-    <Button fx:id="returnTicketButton" onAction="#goBack" text="back" />
+    <Button  onAction="#goBack" text="back" />
+    <Button fx:id="returnTicketButton" onAction="#onReturnTicketClick" text="Return Ticket"/>
 </VBox>

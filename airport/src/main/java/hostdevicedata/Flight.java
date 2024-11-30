@@ -271,14 +271,21 @@ public class Flight {
         return planeId;
     }
 
-    public static List<Integer> searchBySourceAndDestination(String source, String destination) {
+    public static List<Integer> multiplie_search(String source, String destination, Date startDate, Date endDate) {
         List<Integer> flightIds = new ArrayList<>();
-        String query = "SELECT flight_id FROM flights WHERE source = ? AND destination = ?";
-        
+        String query = "SELECT DISTINCT f.flight_id " +
+                "FROM flights f " +
+                "JOIN tickets t ON f.flight_id = t.flight_id " +
+                "WHERE f.source = ? AND f.destination = ? " +
+                "AND t.start_date BETWEEN ? AND ?";
+
         try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
              PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, source);
             statement.setString(2, destination);
+            statement.setDate(3, startDate);
+            statement.setDate(4, endDate);
+
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     flightIds.add(resultSet.getInt("flight_id"));
@@ -287,46 +294,36 @@ public class Flight {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return flightIds;
     }
 
 
-    public static List<Integer> searchByDateRange(Date startDate, Date endDate) {
-        List<Integer> flightIds = new ArrayList<>();
-        String query = "SELECT flight_id FROM flights WHERE date BETWEEN ? AND ?";
-        
+    public static Flight getFlightByTicketId(int ticketId) {
+        Flight flight = null;
+        String query = "SELECT * FROM flights WHERE flight_id = (SELECT flight_id FROM tickets WHERE ticket_id = ?)";
+
         try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
              PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setDate(1, startDate);
-            statement.setDate(2, endDate);
+            statement.setInt(1, ticketId);
             try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    flightIds.add(resultSet.getInt("flight_id"));
+                if (resultSet.next()) {
+                    flight = new Flight(
+                            resultSet.getInt("flight_id"),
+                            resultSet.getString("source"),
+                            resultSet.getString("destination"),
+                            resultSet.getDate("date"),
+                            resultSet.getTime("time"),
+                            resultSet.getString("owner"),
+                            resultSet.getInt("plane_id")
+                    );
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return flightIds;
+        return flight;
     }
 
-    public static List<Integer> multiplie_search(String source, String destination, Date startDate, Date endDate) {
-        List<Integer> flightIdsBySourceAndDestination = searchBySourceAndDestination(source, destination);
-
-        // Search by date range
-        List<Integer> flightIdsByDate = searchByDateRange(startDate, endDate);
-
-        // Find common flight IDs
-        List<Integer> commonFlightIds = new ArrayList<>();
-
-        // Iterate through the first list and check if the element is in the second list
-        for (Integer flightId : flightIdsBySourceAndDestination) {
-            if (flightIdsByDate.contains(flightId)) {
-                commonFlightIds.add(flightId);
-            }
-        }
-
-        return commonFlightIds;
-    }
 
 }

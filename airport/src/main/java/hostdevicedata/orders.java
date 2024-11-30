@@ -26,19 +26,20 @@ public class Orders {
         this.orderCount = orderCount;
         this.creationDate = creationDate;
         createOrdersTableIfNotExists();
-        saveToDatabase();
     }
 
     // Create table if not exists
     private static void createOrdersTableIfNotExists() {
         String createTableSQL = """
                 CREATE TABLE IF NOT EXISTS orders (
-                    order_id INT AUTO_INCREMENT PRIMARY KEY,
-                    username VARCHAR(255),
-                    ticket_id INT,
-                    order_count INT,
-                    creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                )
+                                    order_id INT AUTO_INCREMENT PRIMARY KEY,
+                                    username VARCHAR(255),
+                                    ticket_id INT,
+                                    order_count INT,
+                                    creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                    CONSTRAINT fk_username_or FOREIGN KEY (username) REFERENCES users(username),
+                                     CONSTRAINT fk_ticket_id FOREIGN KEY (ticket_id) REFERENCES tickets(ticket_id)
+                                )
                 """;
 
         try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
@@ -184,4 +185,23 @@ public class Orders {
         }
         return ordersList;
     }
+
+    public static void deleteOrderByTicketId(int ticketId) {
+        String query = "DELETE FROM orders WHERE ticket_id = ?";
+        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setInt(1, ticketId);
+            int rowsDeleted = statement.executeUpdate();
+
+            if (rowsDeleted > 0) {
+                System.out.println("Orders with Ticket ID " + ticketId + " have been deleted.");
+            } else {
+                System.out.println("No orders found with Ticket ID " + ticketId + ".");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

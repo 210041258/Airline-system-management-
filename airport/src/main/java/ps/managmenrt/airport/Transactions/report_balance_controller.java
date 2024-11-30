@@ -38,7 +38,7 @@ public class report_balance_controller {
                         ", Amount: " + transaction.getAmount() +
                         ", Date: " + transaction.getDate() +
                         ", Type: " + transaction.getTypeTransaction() +
-                        ", Message: " + transaction.getTransactionMessage();
+                        ", Ticket ID : " + transaction.getTransactionMessage();
                 transactionDetails.add(transactionString); // Add to the observable list
             }
 

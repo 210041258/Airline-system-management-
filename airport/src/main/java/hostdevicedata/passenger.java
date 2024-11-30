@@ -34,7 +34,7 @@ public class passenger {
         this.balance = balance;
         createpassengerTable();
     }
-
+    public  passenger() {};
     // Getters and Setters
     public int getId() {
         return id;
@@ -59,7 +59,6 @@ public class passenger {
 
     public void setPassword(String password) {
         this.password = password;
-        updatepassengerInDB("password", password);
     }
 
     public String getEmail() {
@@ -82,13 +81,16 @@ public class passenger {
 
     // Method to create the passengers table if it does not exist
     public static void createpassengerTable() {
-        String createpassengerTableSQL = "CREATE TABLE IF NOT EXISTS passengers (" +
-                "id INT AUTO_INCREMENT PRIMARY KEY, " +
-                "username VARCHAR(50) NOT NULL UNIQUE, " +
-                "password VARCHAR(100) NOT NULL, " +
-                "email VARCHAR(100) NOT NULL, " +
-                "balance DOUBLE NOT NULL" +
-                ")";
+        String createpassengerTableSQL = """
+
+                CREATE TABLE IF NOT EXISTS passengers (
+    id INT AUTO_INCREMENT PRIMARY KEY,       
+    username VARCHAR(50) NOT NULL,           
+    balance DOUBLE NOT NULL DEFAULT 0.0,                  
+    email VARCHAR(100) NOT NULL,           
+    FOREIGN KEY (username) REFERENCES users(username) ON DELETE CASCADE
+);
+""";
 
         try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
              Statement statement = connection.createStatement()) {
@@ -98,6 +100,74 @@ public class passenger {
             e.printStackTrace();
         }
     }
+
+
+
+    public void updateUserAndPassenger(String username, double balance, String email,String password1) {
+
+        // Prepare the stored procedure call
+        String query = "{CALL UpdateUserAndPassenger(?, ?, ?, ?)}";
+        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
+
+            // Now call the stored procedure to update user and passenger data
+            try (CallableStatement stmt = connection.prepareCall(query)) {
+                // Set parameters
+                stmt.setString(1, username);
+                stmt.setDouble(2, balance);
+                stmt.setString(3, email);
+                stmt.setString(4, password1);  // Pass the current password
+
+                stmt.executeUpdate();
+                System.out.println("User and passenger data updated successfully.");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Error updating user and passenger.");
+        }
+    }
+
+
+    public static void updateBalance(String username, double newBalance) {
+        String updateSQL = "UPDATE users SET balance = ? WHERE username = ?";
+    
+        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+             PreparedStatement preparedStatement = connection.prepareStatement(updateSQL)) {
+            preparedStatement.setDouble(1, newBalance);
+            preparedStatement.setString(2, username);
+            int rowsAffected = preparedStatement.executeUpdate();
+    
+            if (rowsAffected > 0) {
+                System.out.println("Balance updated successfully for user: " + username);
+            } else {
+                System.out.println("No passenger found with username: " + username);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static double getBalanceByUsername(String username) {
+        double balance = 0.0; // Default balance if user is not found
+        String query = "SELECT balance FROM passengers WHERE username = ?";
+    
+        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, username);
+            ResultSet resultSet = preparedStatement.executeQuery();
+    
+            if (resultSet.next()) {
+                balance = resultSet.getDouble("balance"); // Retrieve the balance
+                System.out.println("Balance retrieved for user " + username + ": " + balance);
+            } else {
+                System.out.println("No passenger found with username: " + username);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return balance; // Return the balance (0.0 if not found)
+    }
+
 
     // Method to insert or update a passenger record in the database
     private void updatepassengerInDB(String field, String newValue) {
@@ -176,13 +246,32 @@ public class passenger {
         }
     }
 
-    // Method to search for a passenger by username
+
+
     public static passenger searchByUsername(String username) {
-        String query = "SELECT * FROM passengers WHERE username = ?";
+        String selectPasswordQuery = "SELECT password FROM users WHERE username = ?";
         passenger passenger = null;
+        String password = null;
+
 
         try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(selectPasswordQuery)) {
+
+            preparedStatement.setString(1, username);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                password = resultSet.getString("password");  // Correctly fetch the password
+            } else {
+                return null;  // If no user is found, return null
+            }
+        } catch (SQLException e) {
+            return null;  // Return null if any exception occurs
+        }
+
+        // Now fetch the passenger details using the password
+        String query = "SELECT * FROM passengers WHERE username = ?";
+        try (PreparedStatement preparedStatement = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD).prepareStatement(query)) {
             preparedStatement.setString(1, username);
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -190,19 +279,19 @@ public class passenger {
                 passenger = new passenger(
                         resultSet.getInt("id"),
                         resultSet.getString("username"),
-                        resultSet.getString("password"),
+                        password,  // Use the fetched password
                         resultSet.getString("email"),
                         resultSet.getDouble("balance")
                 );
-                System.out.println("passenger found: " + passenger.getUsername());
             } else {
-                System.out.println("passenger with username " + username + " not found.");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
         }
+
         return passenger;
     }
+
+
 
     // Method to retrieve all passengers from the database
     public static List<passenger> getAllpassengers() {

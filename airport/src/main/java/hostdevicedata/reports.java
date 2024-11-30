@@ -18,13 +18,16 @@ public class reports {
 
 
     private void createTables() {
-        String createTicketsTableSQL = "CREATE TABLE IF NOT EXISTS tickets (" +
-                "ticket_id INT AUTO_INCREMENT PRIMARY KEY, " +
-                "flight_id INT NOT NULL, " +
-                "start_date DATE NOT NULL, " +
-                "end_date DATE NOT NULL, " +
-                "price DOUBLE NOT NULL" +
-                ")";
+        String createTicketsTableSQL = """
+CREATE TABLE IF NOT EXISTS tickets (
+                ticket_id INT AUTO_INCREMENT PRIMARY KEY,
+                flight_id INT NOT NULL,
+                start_date DATE NOT NULL,
+                end_date DATE NOT NULL,
+                price DOUBLE NOT NULL,
+                FOREIGN KEY (flight_id) REFERENCES flights(flight_id)
+        )
+                """;
 
         String createTransactionsTableSQL = "CREATE TABLE IF NOT EXISTS transactions (" +
                 "transaction_id INT AUTO_INCREMENT PRIMARY KEY, " +
@@ -32,7 +35,8 @@ public class reports {
                 "amount DECIMAL(10, 2) NOT NULL, " +
                 "date DATE NOT NULL, " +
                 "type_transaction VARCHAR(50) NOT NULL, " +
-                "transaction_message TEXT" +
+                "transaction_message TEXT," +
+                "CONSTRAINT fk_username_1 FOREIGN KEY (username) REFERENCES users(username)"+
                 ")";
 
         try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);

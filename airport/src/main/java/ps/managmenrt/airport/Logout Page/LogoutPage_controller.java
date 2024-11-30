@@ -12,6 +12,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Optional;
 
 public class LogoutPage_controller {
@@ -37,6 +41,19 @@ public class LogoutPage_controller {
             currentStage.close();
 
             try {
+
+                    File directory = new File(".");
+
+                    File[] files = directory.listFiles((dir, name) -> name.contains("_session.txt"));
+
+                    if (files != null) {
+                        for (File file : files) {
+                            if (file.delete()) {
+                            } else {
+                                System.out.println("Failed to delete file: " + file.getName());
+                            }
+                        }
+                    }
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("main-view.fxml"));
                 Parent root = loader.load();
                 Stage loginStage = new Stage();

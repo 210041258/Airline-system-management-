@@ -124,7 +124,7 @@ public class LoginPage_controller {
 
         // Create the new session file for the provided username
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(sessionFile))) {
-            writer.write("Username: " + username);
+            writer.write("Username: " + username.trim().toLowerCase());
             writer.newLine();  // Adding a new line for better formatting
             System.out.println("New session file created: " + sessionFile.getName());
         } catch (IOException e) {
