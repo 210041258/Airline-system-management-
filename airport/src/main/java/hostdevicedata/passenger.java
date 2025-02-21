@@ -306,7 +306,7 @@ public class passenger {
                 passenger passenger = new passenger(
                         resultSet.getInt("id"),
                         resultSet.getString("username"),
-                        resultSet.getString("password"),
+                        "hidden",
                         resultSet.getString("email"),
                         resultSet.getDouble("balance")
                 );

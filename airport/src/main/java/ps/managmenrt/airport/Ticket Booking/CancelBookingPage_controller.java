@@ -88,7 +88,7 @@ public class CancelBookingPage_controller {
                     LocalDate departureDate = LocalDate.parse(departureDateString); // Parse the date
 
                     // Check if the ticket can be returned
-                    if (canReturnTicket(departureDate)) {
+                    if (!canReturnTicket(departureDate)) {
                         double ticketPrice = ticket.getPrice();
                         String username = getUsernameFromSessionFile();
                         passenger Passenger = passenger.searchByUsername(username); // Ensure Passenger class is defined
@@ -118,7 +118,7 @@ public class CancelBookingPage_controller {
                         }
                     } else {
                         showAlert("Cancellation Unavailable", "Tickets cannot be canceled within 2 days of departure.");
-                    }
+                }
                 } else {
                     showAlert("Ticket Not Found", "The selected ticket does not exist.");
                 }

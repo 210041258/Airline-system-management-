@@ -18,6 +18,8 @@ import javafx.stage.Stage;
 
 import java.io.*;
 import java.sql.Date;
+import java.util.Arrays;
+import java.util.Comparator;
 
 public class BookTicketPage_controller {
     @FXML
@@ -65,7 +67,7 @@ public class BookTicketPage_controller {
 
     public static String getUsernameFromSessionFile() {
         String username = null;
-        File directory = new File("."); // Current directory
+        File directory = new File("."); // Current directory (consider specifying a session folder)
 
         // Filter for files containing "_session" in their name
         File[] sessionFiles = directory.listFiles((dir, name) -> name.toLowerCase().contains("_session"));
@@ -75,24 +77,28 @@ public class BookTicketPage_controller {
             return null;
         }
 
-        // Assuming only one session file is needed (first found file)
-        File sessionFile = sessionFiles[0];
+        // Sort session files by last modified time (latest first)
+        Arrays.sort(sessionFiles, Comparator.comparingLong(File::lastModified).reversed());
+
+        File sessionFile = sessionFiles[0]; // Pick the latest session file
         System.out.println("Reading from session file: " + sessionFile.getName());
 
         try (BufferedReader reader = new BufferedReader(new FileReader(sessionFile))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.startsWith("Username:")) {
-                    username = line.substring("Username:".length()).trim(); // Extract the username
-                    break; // Exit the loop once the username is found
+                    username = line.substring("Username:".length()).trim();
+                    System.out.println("Username found: " + username); // Debug log
+                    break;
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Error reading session file: " + e.getMessage());
         }
 
         return username;
     }
+
 
     public int ticketId  ;
     private void  loadTicketsById(int ticketId_tyer) {
@@ -125,6 +131,7 @@ public class BookTicketPage_controller {
     
         if (currentBalance < ticketPrice) {
             showAlert("Insufficient Balance", "You do not have enough balance to purchase this ticket.");
+            return;
         }
     
         // Update user's balance

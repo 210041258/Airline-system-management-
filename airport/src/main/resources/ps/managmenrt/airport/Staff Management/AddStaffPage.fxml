@@ -6,16 +6,16 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="BOTTOM_CENTER" spacing="10.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ps.managmenrt.airport.AddStaffPage_controller">
+<VBox alignment="BOTTOM_CENTER" prefHeight="284.0" prefWidth="613.0" spacing="10.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ps.managmenrt.airport.AddStaffPage_controller">
     <padding>
-        <Insets top="20.0" right="20.0" bottom="20.0" left="20.0"/>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
-    <Label text="Add New Staff" style="-fx-font-size: 24px; -fx-text-fill: #333333;" />
+    <Label style="-fx-font-size: 24px; -fx-text-fill: #333333;" text="Add New Staff" />
     <TextField fx:id="emailField" promptText="Email" />
     <TextField fx:id="usernameField" promptText="Username" />
     <TextField fx:id="salaryField" promptText="Salary" />
     <TextField fx:id="jobPositionField" promptText="Job Position" />
-    <Button text="Add" onAction="#onAddButtonClick" />
+    <Button onAction="#onAddButtonClick" text="Add" />
 
-<Button text="Back" onAction="#goBack" />
+<Button onAction="#goBack" text="Back" />
 </VBox>

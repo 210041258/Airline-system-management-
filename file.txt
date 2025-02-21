@@ -1,0 +1,47 @@
+triggers creations finalized
+
+'after_passenger_update', 'UPDATE', 'passengers', 'BEGIN\n    UPDATE users\n    SET \n        balance = NEW.balance,\n        email = NEW.email\n    WHERE username = NEW.username;\nEND', 'AFTER', '2024-11-29 17:22:19.71', 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION', 'root@localhost', 'utf8mb4', 'utf8mb4_0900_ai_ci', 'utf8mb4_0900_ai_ci'
+'after_transaction_insert', 'INSERT', 'transactions', 'BEGIN\n    IF NEW.type_transaction = \'Buying Ticket\' THEN\n        INSERT INTO orders (username, ticket_id, order_count, creation_date)\n        VALUES (NEW.username, NEW.transaction_message, 1, NOW());\n    END IF;\nEND', 'AFTER', '2024-11-30 09:54:07.13', 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION', 'root@localhost', 'utf8mb4', 'utf8mb4_0900_ai_ci', 'utf8mb4_0900_ai_ci'
+'after_user_insert', 'INSERT', 'users', 'BEGIN\n    INSERT INTO passengers (username, balance, email)\n    VALUES (NEW.username, NEW.balance, NEW.email);\nEND', 'AFTER', '2024-11-29 17:20:40.14', 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION', 'root@localhost', 'utf8mb4', 'utf8mb4_0900_ai_ci', 'utf8mb4_0900_ai_ci'
+
+
+local and db connection creations finalized / sys analysis req.
+
+
+security here is about distrubited to two tables one for the passenger and users passenger cointine senstive value and user is for the retrivel of the information in the dbs
+
+
+    public static void createpassengerTable() {
+        String createpassengerTableSQL = """
+
+                CREATE TABLE IF NOT EXISTS passengers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    balance DOUBLE NOT NULL DEFAULT 0.0,
+    email VARCHAR(100) NOT NULL,
+    *FOREIGN KEY (username) REFERENCES users(username) ON DELETE CASCADE*
+);
+""";
+
+
+
+db services at suggestions :
+
+use airlines_suggestion_issues;
+select * from support_feedback;
+
+
+db services at creations :
+
+use user_databases;
+--  'staff'
+-- 'tickets'
+
+select * from transactions;
+select * from orders;
+select * from users;
+select * from passengers;
+select * from flights;
+select * from tickets;
+
+SHOW TRIGGERS;
