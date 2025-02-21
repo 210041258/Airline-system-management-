@@ -11,8 +11,8 @@ public class SignupPage extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(SignupPage.class.getResource("User Authentication/SignupPage.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 720, 240);
-        stage.setTitle("Hello!");
+        Scene scene = new Scene(fxmlLoader.load(), 1000, 600);
+        stage.setTitle("Signup Form");
         stage.setScene(scene);
         stage.show();
     }
@@ -20,4 +20,5 @@ public class SignupPage extends Application {
     public static void main(String[] args) {
         launch();
     }
+
 }

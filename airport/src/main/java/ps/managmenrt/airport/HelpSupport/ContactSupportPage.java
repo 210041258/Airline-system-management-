@@ -11,7 +11,7 @@ public class ContactSupportPage extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(ContactSupportPage.class.getResource("HelpSupport/ContactSupportPage.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 800, 400);
+        Scene scene = new Scene(fxmlLoader.load(), 800, 600);
         stage.setTitle("Contact Support");
         stage.setScene(scene);
         stage.show();

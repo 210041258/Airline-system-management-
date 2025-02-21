@@ -1,0 +1,57 @@
+0,albreem,42342.0,2024-11-29,Buying Ticket,Ticket ID: 4, Flight ID: 5435, Start Date: 2023-10-20, End Date: 2023-12-20, Price: 42342.0
+0,albreem,42342.0,2024-11-29,Buying Ticket,Ticket ID: 4, Flight ID: 5435, Start Date: 2023-10-20, End Date: 2023-12-20, Price: 42342.0
+0,albreem,42342.0,2024-11-29,Buying Ticket,Ticket ID: 11, Flight ID: 5435, Start Date: 2023-10-20, End Date: 2023-12-20, Price: 42342.0
+0,albreem,42342.0,2024-11-29,Buying Ticket,Ticket ID: 11, Flight ID: 5435, Start Date: 2023-10-20, End Date: 2023-12-20, Price: 42342.0
+0,albreem,42342.0,2024-11-29,Buying Ticket,Ticket ID: 11, Flight ID: 5435, Start Date: 2023-10-20, End Date: 2023-12-20, Price: 42342.0
+0,albreem,42342.0,2024-11-29,Buying Ticket,Ticket ID: 11, Flight ID: 5435, Start Date: 2023-10-20, End Date: 2023-12-20, Price: 42342.0
+0,albreem,42342.0,2024-11-29,Buying Ticket,Ticket ID: 16, Flight ID: 5435, Start Date: 2023-10-20, End Date: 2023-12-20, Price: 42342.0
+0,albreem,42342.0,2024-11-29,Buying Ticket,Ticket ID: 16, Flight ID: 5435, Start Date: 2023-10-20, End Date: 2023-12-20, Price: 42342.0
+0,ASD,100.0,2024-11-29,Buying Ticket,Ticket ID: 18, Flight ID: 5435, Start Date: 2023-10-20, End Date: 2024-12-20, Price: 100.0
+0,ASD,100.0,2024-11-29,Buying Ticket,Ticket ID: 18, Flight ID: 5435, Start Date: 2023-10-20, End Date: 2024-12-20, Price: 100.0
+0,asd,4234888.0,2024-11-29,Buying Ticket,17
+0,asd,4234888.0,2024-11-29,Buying Ticket,17
+0,asd,4234888.0,2024-11-29,Buying Ticket,17
+0,asd,4234888.0,2024-11-29,Buying Ticket,17
+0,asd,4234888.0,2024-11-29,Buying Ticket,17
+0,asd,4234888.0,2024-11-29,Buying Ticket,17
+0,asd,4234888.0,2024-11-29,Buying Ticket,17
+0,albreem,100.0,2024-11-29,Buying Ticket,18
+0,albreem,100.0,2024-11-29,Buying Ticket,18
+0,asd,100.0,2024-11-29,Buying Ticket,18
+0,asd,100.0,2024-11-29,Buying Ticket,18
+0,asd,100.0,2024-11-29,Buying Ticket,18
+0,asd,100.0,2024-11-29,Buying Ticket,18
+0,asd,100.0,2024-11-29,Buying Ticket,18
+0,asd,100.0,2024-11-29,Buying Ticket,18
+0,asd,42342.0,2024-11-29,Buying Ticket,16
+0,asd,42342.0,2024-11-29,Buying Ticket,16
+0,asd,35445.0,2024-11-29,Buying Ticket,6
+0,asd,35445.0,2024-11-29,Buying Ticket,6
+0,albreem,4234888.0,2024-11-30,Buying Ticket,15
+0,albreem,4234888.0,2024-11-30,Buying Ticket,15
+0,albreem,100.0,2024-11-30,Buying Ticket,18
+0,albreem,100.0,2024-11-30,Buying Ticket,18
+0,albreem,100.0,2024-11-30,Buying Ticket,18
+0,albreem,100.0,2024-11-30,Buying Ticket,18
+0,albreem,42342.0,2024-11-30,Buying Ticket,16
+0,albreem,42342.0,2024-11-30,Buying Ticket,16
+0,albreem,42342.0,2024-11-30,Buying Ticket,16
+0,albreem,42342.0,2024-11-30,Buying Ticket,16
+0,albreem,42342.0,2024-11-30,Buying Ticket,16
+0,albreem,42342.0,2024-11-30,Buying Ticket,16
+0,albreem,42342.0,2024-11-30,Buying Ticket,16
+0,albreem,100.0,2024-11-30,Buying Ticket,18
+0,albreem,35445.0,2024-11-30,Buying Ticket,6
+0,albreem,100.0,2024-11-30,Buying Ticket,18
+0,albreem,4234888.0,2024-11-30,Buying Ticket,14
+0,albreem,100.0,2024-11-30,Buying Ticket,18
+0,albreem,42342.0,2024-11-30,Buying Ticket,16
+0,albreem,4234888.0,2024-11-30,Buying Ticket,17
+0,albreem,42342.0,2024-11-30,Buying Ticket,4
+0,albreem,4234888.0,2024-11-30,Buying Ticket,17
+0,albreem,35445.0,2024-11-30,Buying Ticket,6
+0,albreem,4234888.0,2024-11-30,Buying Ticket,14
+0,albreem,4234888.0,2024-11-30,Buying Ticket,17
+0,albreem,8.6077322E7,2024-11-30,Cancel Ticket,17
+0,albreem,100.0,2024-11-30,Buying Ticket,18
+0,albreem,8.6077322E7,2024-11-30,Cancel Ticket,18

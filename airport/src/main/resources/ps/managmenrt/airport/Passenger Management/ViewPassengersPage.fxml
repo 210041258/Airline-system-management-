@@ -1,28 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-        <?import javafx.scene.layout.BorderPane?>
-        <?import javafx.scene.control.ListView?>
-        <?import javafx.scene.control.Label?>
-        <?import javafx.scene.control.TextField?>
-        <?import javafx.scene.control.Button?>
-        <?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="ps.managmenrt.airport.ViewPassengersPage_controller">
-<center>
-    <ListView fx:id="passengersListView" onMouseClicked="#handlePassengerSelection" />
-</center>
-<right>
-    <VBox spacing="10">
-        <Label text="Selected Passenger Details" />
-        <Label text="Passenger Name:" />
-        <TextField fx:id="passengerNameField" promptText="Passenger Name" editable="false" />
-        <Label text="Passport Number:" />
-        <TextField fx:id="passportNumberField" promptText="Passport Number" editable="false" />
-        <Button text="Update Passenger" onAction="#handleUpdatePassenger" />
-        <Button text="Delete Passenger" onAction="#handleDeletePassenger" />
-    </VBox>
-</right>
-<bottom>
-    <Label text="Passenger List" />
-</bottom>
-</BorderPane>
+<VBox alignment="TOP_CENTER" prefHeight="600.0" prefWidth="700.0" spacing="10.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ps.managmenrt.airport.ViewPassengersPage_controller">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+
+    <Label text="Passenger Management" textFill="RED">
+        <font>
+            <Font name="Marlett" size="34.0" />
+        </font>
+    </Label>
+
+    <TextField fx:id="usernameField" promptText="Username" />
+    <TextField fx:id="emailField" promptText="Email" />
+    <PasswordField fx:id="passwordField" promptText="Password" />
+    <TextField fx:id="balanceField" promptText="Balance" />
+
+    <Button onAction="#onAddButtonClick" text="Add" />
+    <Button onAction="#onUpdateButtonClick" text="Update" />
+    <Button onAction="#onDeleteButtonClick" text="Delete" />
+    <Button onAction="#onSearchButtonClick" text="Search" />
+    <Button onAction="#goBack" prefHeight="62.0" prefWidth="152.0" text="Back" textFill="#da1212" />
+
+    <ListView fx:id="passengerListView" />
+
+    <Label text="Search, delete by username only" textFill="RED">
+        <font>
+            <Font name="Marlett" size="29.0" />
+        </font>
+    </Label>
+</VBox>

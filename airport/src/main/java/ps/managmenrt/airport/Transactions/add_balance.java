@@ -11,7 +11,7 @@ public class add_balance extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(add_balance.class.getResource("Transactions/add_balance.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 720, 240);
+        Scene scene = new Scene(fxmlLoader.load(), 720, 340);
         stage.setTitle("Hello!");
         stage.setScene(scene);
         stage.show();

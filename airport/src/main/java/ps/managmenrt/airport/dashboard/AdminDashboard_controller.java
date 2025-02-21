@@ -3,9 +3,6 @@ package ps.managmenrt.airport;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
-
-  import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -48,13 +45,18 @@ import javafx.stage.Stage;
         }
 
         @FXML
-        void Reportbalance(ActionEvent event) {
-            loadPage("Transactions/report_balance.fxml",event,"View Flights");
+        void handleAddBalanceButtonAction(ActionEvent event) {
+            loadPage("Transactions/add_balance.fxml",event,"Add Balance");
         }
 
         @FXML
         void handleViewPassengersButtonAction(ActionEvent event) {
             loadPage("Passenger Management/ViewPassengersPage.fxml",event,"View Passengers");
+        }
+
+        @FXML
+        void handleviewticketButtonAction(ActionEvent event) {
+            loadPage("Ticket Booking/ViewTicket.fxml",event,"View Tickets");
         }
 
         @FXML

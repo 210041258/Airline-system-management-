@@ -13,11 +13,13 @@
         <Button fx:id="viewFlightsButton" onAction="#handleViewFlightsButtonAction" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5px;" text="View Flights" />
         <Button fx:id="viewPassengersButton" onAction="#handleViewPassengersButtonAction" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5px;" text="View Passengers" />
         <Button fx:id="viewStaffButton" onAction="#handleViewStaffButtonAction" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5px;" text="View Staff" />
+        <Button fx:id="viewticketButton" onAction="#handleviewticketButtonAction" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5px;" text="View Tickets" />
     </HBox>
 
     <HBox fx:id="reportsButtonsHBox" alignment="CENTER" layoutX="74.0" layoutY="185.0" prefHeight="30.0" prefWidth="670.0" spacing="20.0">
         <Button fx:id="viewFlightsReportsButton" onAction="#handleViewFlightsReportsButtonAction" prefHeight="30.0" prefWidth="177.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5px;" text="Flight Reports" />
         <Button fx:id="viewPassengerReportsButton" onAction="#handleViewPassengerReportsButtonAction" prefHeight="30.0" prefWidth="180.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5px;" text="Passenger Reports" />
+      <Button fx:id="viewFlightsReportsButton1" onAction="#handleAddBalanceButtonAction" prefHeight="30.0" prefWidth="115.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5px;" text="Add Balance" />
     </HBox>
 
 
