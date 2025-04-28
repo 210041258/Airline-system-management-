@@ -297,7 +297,30 @@ public class Flight {
 
         return flightIds;
     }
-
+public static List<Flight> searchFlightsByOwner(String ownerName) {
+    List<Flight> flights = new ArrayList<>();
+    String query = "SELECT * FROM flights WHERE owner = ?";
+    try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+         PreparedStatement statement = connection.prepareStatement(query)) {
+        statement.setString(1, ownerName);
+        try (ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
+                flights.add(new Flight(
+                        resultSet.getInt("flight_id"),
+                        resultSet.getString("source"),
+                        resultSet.getString("destination"),
+                        resultSet.getDate("date"),
+                        resultSet.getTime("time"),
+                        resultSet.getString("owner"),
+                        resultSet.getInt("plane_id")
+                ));
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return flights;
+}
 
     public static Flight getFlightByTicketId(int ticketId) {
         Flight flight = null;
