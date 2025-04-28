@@ -24,6 +24,9 @@
     <TextField fx:id="planeIdField" promptText="Plane ID" />
     <TextField fx:id="planeCompanyField" promptText="Plane Company" />
 
+   <TextField fx:id="flightDateField" promptText="Flight Date (YYYY-MM-DD)" />
+   <TextField fx:id="flightTimeField" promptText="Flight Time (HH:MM:SS)" />
+
     <Button onAction="#onInsertButtonClick" prefHeight="74.0" prefWidth="216.0" text="Insert Flight" textFill="#da1212">
         <font>
             <Font name="Microsoft Uighur Bold" size="27.0" />
