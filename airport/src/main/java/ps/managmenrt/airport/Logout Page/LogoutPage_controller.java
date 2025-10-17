@@ -27,7 +27,7 @@ public class LogoutPage_controller {
     void handleLogout(ActionEvent event) {
         Alert alert = new Alert(AlertType.CONFIRMATION);
         alert.setTitle("Logout Confirmation");
-        alert.setHeaderText(null); // No header text
+        alert.setHeaderText(null);
         alert.setContentText("Are you sure you want to logout?");
 
         ButtonType buttonTypeYes = new ButtonType("Yes");
